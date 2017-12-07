@@ -144,8 +144,8 @@ server <- function(input, output, session) {
                    instructions = receta$instruc,
                    dificultadImage = getDifcultadImage(receta$dificultad),
                    twitter = twitterLink,
-                   facebook = facebookLink
-                   
+                   facebook = facebookLink,
+                   tiempo = receta$tiempo_mins
       )
     ))
   }
