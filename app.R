@@ -122,7 +122,7 @@ server <- function(input, output, session) {
   showRecetaModal <- function(uidInput) {
     receta <- recetas %>%
       filter(uid == uidInput)
-    twitterLink <- paste0("http://twitter.com/share?http://127.0.0.1/?id=", 
+    twitterLink <- paste0("http://twitter.com/share?url=http://127.0.0.1/?id=", 
                           uidInput)
     facebookLink <- paste0("http://www.facebook.com/sharer.php?u=http://127.0.0.1/?id=",
                            uidInput)
