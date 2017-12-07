@@ -231,10 +231,17 @@ server <- function(input, output, session) {
         ingredientes <- purrr::map(receta$ing, function(ing) {
           paste0(ing, ', ')
         })
+        if (is.na(d$dificultad[i]) || d$dificultad[i] == 1) {
+          dificultadImage <- "img/Iconos especial cocina-06.png"
+        } else if (d$dificultad[i] == 2) {
+          dificultadImage <- "img/Iconos especial cocina-07.png"
+        } else {
+          dificultadImage <- "img/Iconos especial cocina-08.png"
+        }
         html <- htmlTemplate("templates/receta_list_detailed.html",
           id = recetaId,
           name = d$name[i],
-          dificultad = d$dificultad[i],
+          dificultadImage = dificultadImage,
           tiempo = d$tiempo_mins[i],
           ingredientes = ingredientes
         )
