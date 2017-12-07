@@ -1,0 +1,49 @@
+@import url('https://fonts.googleapis.com/css?family=Josefin+Sans');
+
+@import url('https://fonts.googleapis.com/css?family=Josefin+Sans|Josefin+Slab');
+
+body {
+  background-color: #E8E8E8;
+  font-family: 'Josefin Sans', sans-serif;
+  padding-left: 5pt;
+  padding-right: 5pt;
+}
+button {
+  font-family: 'Josefin Sans', sans-serif;
+}
+#buttonScreen {
+  display: block;
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  transform: translateY(-50%);
+}
+#crear, #buscar {
+  margin-left: 25%;
+  width: 50% !important;
+  border: none;
+  background-color: #fff;
+  color: #8f8787;
+}
+.needed {
+  background-color: #E8E8E8;
+  border: none;
+}
+#recetas {
+  font-size: 20pt;
+  background-color: #e8e8e8;
+  width: 80pt;
+  margin-left: 5pt;
+}
+#searchName {
+  background-color: #e8e8e8;
+  border: none;
+    border-bottom-style: none;
+    border-top-color: currentcolor;
+    border-right-color: currentcolor;
+    border-bottom-color: currentcolor;
+    border-left-color: currentcolor;
+  border-bottom-style: solid;
+  border-color: white;
+  border-radius: 0;
+}
