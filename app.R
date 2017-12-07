@@ -120,6 +120,17 @@ server <- function(input, output, session) {
     showRecetaModal(input$last_btn)
   })
   
+  getDifcultadImage <- function(dificultad) {
+    dificultadImage <- "img/Iconos especial cocina-08.png"
+    if (is.na(dificultad) || dificultad == 1) {
+      dificultadImage <- "img/Iconos especial cocina-06.png"
+    } else if (dificultad == 2) {
+      dificultadImage <- "img/Iconos especial cocina-07.png"
+    }
+    dificultadImage
+  }
+  
+  
   showRecetaModal <- function(uidInput) {
     receta <- recetas %>%
       filter(uid == uidInput)
@@ -131,6 +142,7 @@ server <- function(input, output, session) {
       title = receta$name,
       htmlTemplate("templates/receta_detail.html",
                    instructions = receta$instruc,
+                   dificultadImage = getDifcultadImage(receta$dificultad),
                    twitter = twitterLink,
                    facebook = facebookLink
                    
@@ -232,17 +244,10 @@ server <- function(input, output, session) {
         ingredientes <- purrr::map(receta$ing, function(ing) {
           paste0(ing, ', ')
         })
-        if (is.na(d$dificultad[i]) || d$dificultad[i] == 1) {
-          dificultadImage <- "img/Iconos especial cocina-06.png"
-        } else if (d$dificultad[i] == 2) {
-          dificultadImage <- "img/Iconos especial cocina-07.png"
-        } else {
-          dificultadImage <- "img/Iconos especial cocina-08.png"
-        }
         html <- htmlTemplate("templates/receta_list_detailed.html",
           id = recetaId,
           name = d$name[i],
-          dificultadImage = dificultadImage,
+          dificultadImage = getDifcultadImage(d$dificultad[i]),
           tiempo = d$tiempo_mins[i],
           ingredientes = ingredientes
         )
