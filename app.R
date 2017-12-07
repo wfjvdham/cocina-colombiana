@@ -202,11 +202,13 @@ server <- function(input, output, session) {
   })
   
   output$ing_count <- renderUI({
-    h <- 0
+    n <- 0
     if (!is.null(input$select_ing)) {
-      h <- length(input$select_ing)
+      n <- length(input$select_ing)
     }
-    HTML(paste("Numero de ingredientes:", h))
+    htmlTemplate("templates/ing_count.html",
+                 n = n
+    )
   })
 
   output$results <- renderUI({
