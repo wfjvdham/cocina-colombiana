@@ -49,7 +49,7 @@ server <- function(input, output, session) {
         filter(price <= input$price)
     }
     
-    if (input$region != "Todos") {
+    if (!is.null(input$region) && input$region != "Todos") {
       d <- d %>%
         filter(region == input$region)
     }
@@ -156,13 +156,16 @@ server <- function(input, output, session) {
     textInput("searchName", "BUSCA TU RECETA", label = NULL, width = "100%")
   })
   
-  search_table <- function(query, table, props = NULL){
-    if(query == "")
+  search_table <- function(query, table, props){
+    if (is.null(query) || query == "")
       return(table)
-    props <- names(table)
-    table %>% 
-      select(one_of(props)) %>% 
-      filter(rowSums(mutate_all(table, funs(grepl(query,.,ignore.case = TRUE)))) >= 1L)
+    
+    found <- table %>% 
+      select(props) 
+    found <- found %>% 
+      filter(rowSums(mutate_all(found, funs(grepl(query,.,ignore.case = TRUE)))) >= 1L)
+    table %>%
+      filter(name %in% found$name)
   }
   
   output$show_receta <- renderUI({
@@ -193,7 +196,7 @@ server <- function(input, output, session) {
   })
 
   output$results <- renderUI({
-    if (!is.null(data()) & nrow(data()) > 0) {
+    if (!is.null(data()) && nrow(data()) > 0) {
       d <- data() %>%
         group_by(uid) %>%
         top_n(1) %>%
