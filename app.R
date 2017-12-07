@@ -7,9 +7,19 @@ ui <- bootstrapPage(theme = "theme.css",
   tags$head(tags$script(src="scripts.js")),
   useShinyjs(),
   div(id = "buttonScreen",
-    actionButton("buscar", label = "BUSCA TU RECETA", width = "100%"),
+    tags$button(
+      id = "buscar",
+      class = "btn btn-default action-button shiny-bound-input",
+      width = "100%",
+      img(src = "img/botones ceular-12.png")
+    ),
     hr(),
-    actionButton("crear", label = "CREA TU RECETA", width = "100%")
+    tags$button(
+      id = "crear",
+      class = "btn btn-default action-button shiny-bound-input",
+      width = "100%",
+      img(src = "img/botones ceular-13.png")
+    )
   ),
   div(id = "crearScreen", class = "crearScreen",
     uiOutput("select_ingUI"),

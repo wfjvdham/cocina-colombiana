@@ -19,10 +19,8 @@ button {
   transform: translateY(-50%);
 }
 #crear, #buscar {
-  margin-left: 25%;
-  width: 50% !important;
   border: none;
-  background-color: #fff;
+  background-color: #E8E8E8;
   color: #8f8787;
 }
 .needed {
