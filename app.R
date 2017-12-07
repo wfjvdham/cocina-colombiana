@@ -2,7 +2,6 @@ library(shiny)
 library(readxl)
 library(shinyjs)
 library(dplyr)
-library(bsplus)
 
 ui <- bootstrapPage(theme = "theme.css",
   tags$head(tags$script(src="scripts.js")),
