@@ -168,6 +168,10 @@ server <- function(input, output, session) {
       filter(name %in% found$name)
   }
   
+  noResults <- function() {
+    htmlTemplate("templates/no_results.html")
+  }
+  
   output$show_receta <- renderUI({
     d <- search_table(input$searchName, data(), "name") %>%
       group_by(uid) %>%
@@ -183,7 +187,7 @@ server <- function(input, output, session) {
         html
       })
     } else {
-      return("Amigo hoy no hay almuerzo")
+      noResults()
     }
   })
   
@@ -225,7 +229,7 @@ server <- function(input, output, session) {
         html
       })
     } else {
-      return("Amigo hoy no hay almuerzo")
+      noResults()
     }
   })
 }
