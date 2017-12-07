@@ -32,6 +32,7 @@ ui <- bootstrapPage(theme = "theme.css",
     uiOutput('results')
   ),
   div(id = "buscarScreen",
+    tags$img(src = "img/Iconos especial cocina-01.png"),
     uiOutput("searchNameUI"),
     uiOutput("show_receta"),
     actionButton("volver2", label = "Volver", width = "100%")
