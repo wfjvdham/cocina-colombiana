@@ -83,7 +83,7 @@ p {
 .irs-slider {
   border: 4px solid black !important;
 }
-#irs-active-slider, .irs-slider:hover {
+#irs-active-slider .irs-slider:hover {
   background: #000 !important;
 }
 .irs-grid-pol {
@@ -101,4 +101,7 @@ p {
   background: none !important;
   color: #5d5d5d !important;
   font-family: 'Josefin Sans', sans-serif !important;
+}
+#region .control-label {
+  border-bottom: 3px solid white !important;
 }
