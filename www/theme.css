@@ -120,6 +120,7 @@ p {
   padding-top: 20px;
   display: flex;
   align-items: center;
+  padding-bottom: 10px;
 }
 #recetas_title .btn-default:hover {
   background-color: white !important;

@@ -1,5 +1,18 @@
-<button id={{ id }} class="needed" style="width: 100%; background-color: white; text-align: left;" data-toggle="modal" data-target="#receta_detail">
-  <span style="font-size: 15pt;">{{ name }}</span><img src="{{ dificultadImage }}" /><img src="img/Iconos especial cocina-04.png" /><span style="font-size: 10pt;">{{ tiempo }} mins</span><br />
-  <span span style="font-size: 10pt;">Ingredientes: {{ ingredientes }}</span>
+<button id={{ id }} class="needed" style="width: 100%; background-color: white; text-align: left; border-bottom: 1px solid white;" data-toggle="modal" data-target="#receta_detail">
+  <span style="font-size: 15pt; font-style: italic;">{{ name }}</span>
+  <img src="{{ dificultadImage }}" style="max-width: 20px"/>
+  <span style="font-size: 7pt;">{{ dificultadText }}</span>
+  <img src="img/Iconos especial cocina-04.png" style="max-width: 20px"/>
+  <span style="font-size: 7pt;">{{ tiempo }} mins</span>
+  <hr style="margin-top: 0px; margin-bottom: 0px; border-top-width: 3px;" />
+  <p span style="font-size: 10pt; margin-top: 10px; margin-bottom: 0px;">{{ ingredientes }}</p>
 </button>
-<br />
+<div style="margin-bottom: 0px; background-color: white; margin-left: 0px; padding-left: 6px; padding-bottom: 25px;">
+  <a href="{{ twitter }}">
+    <img src="img/Iconos especial cocina-12.png" style="max-width: 15px; margin-right: 2px;"/>
+  </a>
+  <a href="{{ facebook }}">
+    <img src="img/Iconos especial cocina-09.png" style="max-width: 15px; margin-right: 2px;"/>
+  </a>
+  <br />
+</div>
