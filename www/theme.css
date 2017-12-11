@@ -7,8 +7,13 @@ body {
   font-family: 'Josefin Sans', sans-serif;
   padding-left: 5pt;
   padding-right: 5pt;
+  color: #5d5d5d;
 }
 button {
+  font-family: 'Josefin Sans', sans-serif;
+}
+p {
+  color: #5d5d5d;
   font-family: 'Josefin Sans', sans-serif;
 }
 #buttonScreen {
@@ -68,4 +73,32 @@ button {
 .shiny-input-container {
   width: 100%;
   margin-bottom: 0px;
+}
+.irs-line, .irs-bar, .irs-bar-edge {
+  height: 3px !important;
+  top: 27px !important;
+  background: black !important;
+  border: 1px solid !important;
+}
+.irs-slider {
+  border: 4px solid black !important;
+}
+#irs-active-slider, .irs-slider:hover {
+  background: #000 !important;
+}
+.irs-grid-pol {
+  display: none !important;
+}
+.irs-grid-text {
+  display: none !important;
+}
+.irs-min, .irs-max {
+  background: none !important;
+  color: #5d5d5d !important;
+  font-family: 'Josefin Sans', sans-serif !important;
+}
+.irs-single {
+  background: none !important;
+  color: #5d5d5d !important;
+  font-family: 'Josefin Sans', sans-serif !important;
 }

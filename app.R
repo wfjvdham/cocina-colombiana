@@ -26,8 +26,11 @@ ui <- bootstrapPage(theme = "theme.css",
   div(id = "crearScreen", class = "crearScreen",
     uiOutput("select_ingUI"),
     uiOutput("ing_count"),
+    br(),
     uiOutput("priceUI"),
+    br(),
     uiOutput("select_regionUI"),
+    br(),
     actionButton("volver1", label = "Volver", width = "100%"),
     div(id = "recetas", "Recetas"),
     actionButton("orderTiempo", label = "Order por tiempo", width = "50%"),
@@ -167,12 +170,12 @@ server <- function(input, output, session) {
 
   output$select_ingUI <- renderUI({
     selectizeInput("select_ing", 
-                   "Escribe los ingredientes",
                    label = NULL,
                    choices = unique(recetas$ing), 
                    width = "100%",
                    multiple = TRUE, 
-                   options = list(plugins = list("remove_button"))
+                   options = list(plugins = list("remove_button"),
+                                  placeholder = "Escribe los ingredientes")
     )
   })
   
@@ -187,7 +190,8 @@ server <- function(input, output, session) {
   })
   
   output$priceUI <- renderUI({
-    sliderInput("price", "¿Cuánto dinero tienes?", min = 0, max = 100, value = 60, width = "100%")
+    sliderInput("price", "¿Cuánto dinero tienes?", min = 0, max = 100, 
+                value = 60, width = "100%", pre = "$ ", post = " mil")
   })
   
   output$searchNameUI <- renderUI({
