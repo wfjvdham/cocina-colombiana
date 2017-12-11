@@ -109,6 +109,10 @@ p {
   font-family: 'Josefin Sans', sans-serif !important;
 }
 #region .control-label {
+  font-weight: bold;
+  font-size: 17px;
+  color:black;
+  font-family: 'Josefin Slab', sans-serif;
   border-bottom: 3px solid white !important;
 }
 #orderTiempo {
@@ -131,4 +135,34 @@ p {
   background-color: white !important;
   color: white !important;
   border-color: white !important;
+}
+#price_label, #modal_title {
+  font-weight: bold;
+  font-size: 17px;
+  color: black;
+  font-family: 'Josefin Slab', sans-serif;
+}
+#select_ingUI .selectize-input {
+  border-radius: 0pt;
+  border: 1pt solid black;
+  background-color: #e8e8e8;
+  padding-top: 10px;
+}
+#select_ingUI .selectize-input input{
+  color: black;
+  font-size: 15pt;
+  width: 100%;
+}
+#select_ingUI .selectize-input .item{
+  background-color: white;
+}
+#ref {
+  font-size: 23px;
+  font-family: 'Josefin Slab', sans-serif;
+  color: black;
+  text-align: center;
+  padding-bottom: 60px;
+}
+.modal-header {
+  padding-bottom: unset;
 }
