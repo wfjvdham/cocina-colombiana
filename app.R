@@ -24,6 +24,9 @@ ui <- bootstrapPage(theme = "theme.css",
     )
   ),
   div(id = "crearScreen", class = "crearScreen",
+    img(src = "img/botones ceular-13.png",
+        style = "display: block; margin-left: auto; margin-right: auto;"),  
+    p(id = "ref", '"Tomado de: El libro Cocina"'),
     uiOutput("select_ingUI"),
     uiOutput("ing_count"),
     br(),
@@ -138,21 +141,27 @@ server <- function(input, output, session) {
   })
   
   getDifcultadImage <- function(dificultad) {
-    dificultadImage <- "img/Iconos especial cocina-08.png"
-    if (is.na(dificultad) || dificultad == 1) {
+    if (is.na(dificultad)) {
+      dificultadImage <- ""
+    } else if (dificultad == 1) {
       dificultadImage <- "img/Iconos especial cocina-06.png"
     } else if (dificultad == 2) {
       dificultadImage <- "img/Iconos especial cocina-07.png"
+    } else if (dificultad == 3) {
+      dificultadImage <- "img/Iconos especial cocina-08.png"
     }
     dificultadImage
   }
   
   getDifcultadText <- function(dificultad) {
-    dificultadText <- "Difícil"
-    if (is.na(dificultad) || dificultad == 1) {
+    if (is.na(dificultad)) {
+      dificultadText <- ""
+    } else if (dificultad == 1) {
       dificultadText <- "Fácil"
     } else if (dificultad == 2) {
       dificultadText <- "Normal"
+    } else if (dificultad == 3) {
+      dificultadText <- "Difícil"
     }
     dificultadText
   }
@@ -163,10 +172,15 @@ server <- function(input, output, session) {
   }
   
   createIngredientesText <- function(ingredientes) {
-    ingredientes %>%
-      paste(collapse=', ' ) %>%
-      stringr::str_sub(end = -1L) %>%
-      firstup()
+    result <- ingredientes %>%
+      paste(collapse=', ' ) 
+    if (result == "NA") {
+      ""
+    } else {
+      result %>%
+        stringr::str_sub(end = -1L) %>%
+        firstup()
+    }
   }
   
   getTwitterLink <- function (id) {
@@ -181,14 +195,15 @@ server <- function(input, output, session) {
     receta <- recetas %>%
       filter(uid == uidInput)
     showModal(modalDialog(
-      title = receta$name,
+      title = tags$span(receta$name, id = "modal_title"),
       htmlTemplate("templates/receta_detail.html",
                    instructions = receta$instruc,
                    dificultadImage = getDifcultadImage(receta$dificultad),
                    dificultadText = getDifcultadText(receta$dificultad),
                    twitter = getTwitterLink(uidInput),
                    facebook = getFacebookLink(uidInput),
-                   tiempo = receta$tiempo_mins
+                   tiempo = ifelse(is.na(receta$tiempo_mins), "", paste(receta$tiempo_mins, " mins")),
+                   hidden = ifelse(is.na(receta$tiempo_mins), "hidden", "")
       ),
       footer = modalButton("Cerrar")
     ))
@@ -211,12 +226,13 @@ server <- function(input, output, session) {
       na.omit()
     regiones_list <- append("Todos", regiones$region)
     radioButtons("region", 
-                 "Filtre por región:",
+                 "Filtre por región",
                  choices = regiones_list)
   })
   
   output$priceUI <- renderUI({
-    sliderInput("price", "¿Cuánto dinero tienes?", min = 0, max = 100, 
+    sliderInput("price",  min = 0, max = 100,
+                htmlTemplate("templates/price_label.html"),  
                 value = 60, width = "100%", pre = "$ ", post = " mil")
   })
   
@@ -229,9 +245,8 @@ server <- function(input, output, session) {
       return(table)
     
     found <- table %>% 
-      select(props) 
-    found <- found %>% 
-      filter(rowSums(mutate_all(found, funs(grepl(query,.,ignore.case = TRUE)))) >= 1L)
+      select(props) %>% 
+      filter(rowSums(mutate_all(., funs(grepl(query,.,ignore.case = TRUE)))) >= 1L)
     table %>%
       filter(name %in% found$name)
   }
@@ -243,14 +258,15 @@ server <- function(input, output, session) {
   output$show_receta <- renderUI({
     d <- search_table(input$searchName, data(), "name") %>%
       group_by(uid) %>%
-      top_n(1) %>%
+      filter(row_number() == 1) %>%
       head(5)
     if (nrow(d) > 0) {
       purrr::map(1:nrow(d), function(i) {
         html <- htmlTemplate("templates/receta_list.html",
                              id = d$uid[i],
                              name = d$name[i],
-                             tiempo = d$tiempo_mins[i]
+                             tiempo = ifelse(is.na(d$tiempo_mins[i]), "", paste(d$tiempo_mins[i], " mins")),
+                             hidden = ifelse(is.na(d$tiempo_mins[i]), "hidden", "")
         )
         html
       })
@@ -273,7 +289,7 @@ server <- function(input, output, session) {
     if (!is.null(data()) && nrow(data()) > 0) {
       d <- data() %>%
         group_by(uid) %>%
-        top_n(1) %>%
+        filter(row_number() == 1) %>%
         select(uid, name, region, dificultad, tiempo_mins)
       if (rv$lastClick == "desc") {
         d <- d %>%
@@ -291,10 +307,11 @@ server <- function(input, output, session) {
           name = d$name[i],
           dificultadImage = getDifcultadImage(d$dificultad[i]),
           dificultadText = getDifcultadText(d$dificultad[i]),
-          tiempo = d$tiempo_mins[i],
+          tiempo = ifelse(is.na(d$tiempo_mins[i]), "", paste(d$tiempo_mins[i], " mins")),
           ingredientes = createIngredientesText(receta$ing) ,
           twitter = getTwitterLink(recetaId),
-          facebook = getFacebookLink(recetaId)
+          facebook = getFacebookLink(recetaId),
+          hidden = ifelse(is.na(d$tiempo_mins[i]), "hidden", "")
         )
         html
       })
