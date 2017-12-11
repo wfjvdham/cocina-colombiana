@@ -46,4 +46,26 @@ button {
   border-bottom-style: solid;
   border-color: white;
   border-radius: 0;
+  box-shadow: none;
+}
+#no_results {
+  display: flex;
+  width: 100%;
+  text-align: center;
+  justify-content: center;
+  flex-direction: column;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+}
+#search {
+  display: flex;
+}
+#searchNameUI {
+  flex: 1 0 auto;
+  align-self: center;
+}
+.shiny-input-container {
+  width: 100%;
+  margin-bottom: 0px;
 }
