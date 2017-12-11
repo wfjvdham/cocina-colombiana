@@ -157,23 +157,40 @@ server <- function(input, output, session) {
     dificultadText
   }
   
+  firstup <- function(x) {
+    substr(x, 1, 1) <- toupper(substr(x, 1, 1))
+    x
+  }
+  
+  createIngredientesText <- function(ingredientes) {
+    ingredientes %>%
+      paste(collapse=', ' ) %>%
+      stringr::str_sub(end = -1L) %>%
+      firstup()
+  }
+  
+  getTwitterLink <- function (id) {
+    paste0("http://twitter.com/share?url=http://127.0.0.1/?id=", id)
+  }
+  
+  getFacebookLink <- function (id) {
+    paste0("http://www.facebook.com/sharer.php?u=http://127.0.0.1/?id=", id)
+  }
+
   showRecetaModal <- function(uidInput) {
     receta <- recetas %>%
       filter(uid == uidInput)
-    twitterLink <- paste0("http://twitter.com/share?url=http://127.0.0.1/?id=", 
-                          uidInput)
-    facebookLink <- paste0("http://www.facebook.com/sharer.php?u=http://127.0.0.1/?id=",
-                           uidInput)
     showModal(modalDialog(
       title = receta$name,
       htmlTemplate("templates/receta_detail.html",
                    instructions = receta$instruc,
                    dificultadImage = getDifcultadImage(receta$dificultad),
                    dificultadText = getDifcultadText(receta$dificultad),
-                   twitter = twitterLink,
-                   facebook = facebookLink,
+                   twitter = getTwitterLink(uidInput),
+                   facebook = getFacebookLink(uidInput),
                    tiempo = receta$tiempo_mins
-      )
+      ),
+      footer = modalButton("Cerrar")
     ))
   }
 
@@ -269,15 +286,15 @@ server <- function(input, output, session) {
         recetaId <- d$uid[i]
         receta <- data() %>%
           filter(uid == recetaId)
-        ingredientes <- purrr::map(receta$ing, function(ing) {
-          paste0(ing, ', ')
-        })
         html <- htmlTemplate("templates/receta_list_detailed.html",
           id = recetaId,
           name = d$name[i],
           dificultadImage = getDifcultadImage(d$dificultad[i]),
+          dificultadText = getDifcultadText(d$dificultad[i]),
           tiempo = d$tiempo_mins[i],
-          ingredientes = ingredientes
+          ingredientes = createIngredientesText(receta$ing) ,
+          twitter = getTwitterLink(recetaId),
+          facebook = getFacebookLink(recetaId)
         )
         html
       })
