@@ -12,11 +12,13 @@ button {
   font-family: 'Josefin Sans', sans-serif;
 }
 #buttonScreen {
-  display: block;
+  display: flex;
   position: absolute;
   top: 50%;
   width: 100%;
   transform: translateY(-50%);
+  justify-content: center;
+  flex-direction: column;
 }
 #crear, #buscar {
   border: none;
@@ -36,11 +38,11 @@ button {
 #searchName {
   background-color: #e8e8e8;
   border: none;
-    border-bottom-style: none;
-    border-top-color: currentcolor;
-    border-right-color: currentcolor;
-    border-bottom-color: currentcolor;
-    border-left-color: currentcolor;
+  border-bottom-style: none;
+  border-top-color: currentcolor;
+  border-right-color: currentcolor;
+  border-bottom-color: currentcolor;
+  border-left-color: currentcolor;
   border-bottom-style: solid;
   border-color: white;
   border-radius: 0;

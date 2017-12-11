@@ -6,16 +6,19 @@ library(dplyr)
 ui <- bootstrapPage(theme = "theme.css",
   tags$head(tags$script(src="scripts.js")),
   useShinyjs(),
-  div(id = "buttonScreen",
+  div(id = "buttonScreen", 
+      style = "display: flex; width: 100%; text-align: center; justify-content: center;",
     tags$button(
       id = "buscar",
       class = "btn btn-default action-button shiny-bound-input",
       width = "100%",
       img(src = "img/botones ceular-12.png")
     ),
+    br(),
     hr(),
     tags$button(
-      id = "crear",
+      id = "crear", 
+      style = "display: flex; width: 100%; text-align: center; justify-content: center;",
       class = "btn btn-default action-button shiny-bound-input",
       width = "100%",
       img(src = "img/botones ceular-13.png")
