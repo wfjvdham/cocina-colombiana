@@ -32,8 +32,17 @@ ui <- bootstrapPage(theme = "theme.css",
     uiOutput("select_regionUI"),
     br(),
     actionButton("volver1", label = "Volver", width = "100%"),
-    div(id = "recetas", "Recetas"),
-    actionButton("orderTiempo", label = "Order por tiempo", width = "50%"),
+    br(),
+    div(id = "recetas_title",
+      div(id = "recetas", "Recetas"),
+      br(),
+      tags$button(
+        id = "orderTiempo",
+        class = "btn btn-default action-button shiny-bound-input",
+        img(src = "img/Iconos especial cocina-04.png")
+      ),
+      br()
+    ),
     uiOutput('results')
   ),
   div(id = "buscarScreen",

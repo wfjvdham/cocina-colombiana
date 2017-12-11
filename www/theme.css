@@ -37,8 +37,14 @@ p {
 #recetas {
   font-size: 20pt;
   background-color: #e8e8e8;
-  width: 80pt;
+  width: 130px;
   margin-left: 5pt;
+  font-family: 'Josefin Sans', sans-serif;
+  font-style: italic;
+  font-weight: bold;
+  color: black;
+  padding-top: 5px;
+  padding-left: 10px;
 }
 #searchName {
   background-color: #e8e8e8;
@@ -104,4 +110,24 @@ p {
 }
 #region .control-label {
   border-bottom: 3px solid white !important;
+}
+#orderTiempo {
+  border: none;
+  border-radius: 0px;
+}
+#recetas_title {
+  background-color: white;
+  padding-top: 20px;
+  display: flex;
+  align-items: center;
+}
+#recetas_title .btn-default:hover {
+  background-color: white !important;
+  color: white !important;
+  border-color: white !important;
+}
+#recetas_title .btn-default {
+  background-color: white !important;
+  color: white !important;
+  border-color: white !important;
 }
