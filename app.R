@@ -38,6 +38,7 @@ ui <- bootstrapPage(theme = "theme.css",
       tags$img(src = "img/Iconos especial cocina-01.png"),
       uiOutput("searchNameUI")
     ),
+    br(),
     uiOutput("show_receta"),
     actionButton("volver2", label = "Volver", width = "100%")
   )
@@ -134,6 +135,15 @@ server <- function(input, output, session) {
     dificultadImage
   }
   
+  getDifcultadText <- function(dificultad) {
+    dificultadText <- "Difícil"
+    if (is.na(dificultad) || dificultad == 1) {
+      dificultadText <- "Fácil"
+    } else if (dificultad == 2) {
+      dificultadText <- "Normal"
+    }
+    dificultadText
+  }
   
   showRecetaModal <- function(uidInput) {
     receta <- recetas %>%
@@ -147,6 +157,7 @@ server <- function(input, output, session) {
       htmlTemplate("templates/receta_detail.html",
                    instructions = receta$instruc,
                    dificultadImage = getDifcultadImage(receta$dificultad),
+                   dificultadText = getDifcultadText(receta$dificultad),
                    twitter = twitterLink,
                    facebook = facebookLink,
                    tiempo = receta$tiempo_mins
@@ -180,7 +191,7 @@ server <- function(input, output, session) {
   })
   
   output$searchNameUI <- renderUI({
-    textInput("searchName", "BUSCA TU RECETA", label = NULL, width = "100%")
+    textInput("searchName", placeholder = "BUSCA TU RECETA", label = NULL, width = "100%")
   })
   
   search_table <- function(query, table, props){
