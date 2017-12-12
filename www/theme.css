@@ -162,12 +162,12 @@ p {
   background-color: #e8e8e8;
   padding-top: 10px;
 }
-#select_ingUI .selectize-input input{
+#select_ingUI .selectize-input input {
   color: black;
   font-size: 15pt;
   width: 100%;
 }
-#select_ingUI .selectize-input .item{
+#select_ingUI .selectize-input .item {
   display: none;
 }
 #ref {
@@ -179,4 +179,20 @@ p {
 }
 .modal-header {
   padding-bottom: unset;
+}
+#selected_ing_list {
+  background-color: white;
+}
+#selected_ing_list .checkbox span {
+  font-weight: 300;
+  font-family: 'Josefin Sans', sans-serif;
+}
+#selected_ing_list .checkbox input {
+  margin-top: 0pt;
+}
+#selected_ing_list .checkbox {
+  margin-top: 0px;
+  padding-top: 10px;
+  margin-bottom: 0px;
+  margin-left: 14px;
 }

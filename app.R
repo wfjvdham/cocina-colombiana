@@ -220,7 +220,7 @@ server <- function(input, output, session) {
   output$select_ingUI <- renderUI({
     selectizeInput("select_ing", 
                    label = NULL,
-                   choices = unique(recetas$ing), 
+                   choices = purrr::map(unique(recetas$ing), firstup), 
                    width = "100%",
                    multiple = TRUE, 
                    options = list(plugins = list("remove_button"),
@@ -230,8 +230,8 @@ server <- function(input, output, session) {
   
   output$selected_ing_list <- renderUI({
     checkboxGroupInput("selected_ing_checkbox_group", label = NULL,
-                       choices = input$select_ing,
-                       selected = input$select_ing
+                       choices = purrr::map(input$select_ing, firstup),
+                       selected = purrr::map(input$select_ing, firstup)
     )
   })
   
@@ -242,6 +242,16 @@ server <- function(input, output, session) {
     updateSelectizeInput(session, "select_ing",
                          selected = selectedOptions)
   }, ignoreNULL = FALSE)
+  
+  output$ing_count <- renderUI({
+    n <- 0
+    if (!is.null(input$selected_ing_checkbox_group)) {
+      n <- length(input$selected_ing_checkbox_group)
+    }
+    htmlTemplate("templates/ing_count.html",
+                 n = n
+    )
+  })
   
   # opts <- list(
   #   choroLegend = list(labelFormat = ".0f"),
@@ -318,16 +328,6 @@ server <- function(input, output, session) {
     } else {
       noResults()
     }
-  })
-  
-  output$ing_count <- renderUI({
-    n <- 0
-    if (!is.null(input$select_ing)) {
-      n <- length(input$select_ing)
-    }
-    htmlTemplate("templates/ing_count.html",
-                 n = n
-    )
   })
 
   output$results <- renderUI({
