@@ -2,6 +2,7 @@ library(shiny)
 library(readxl)
 library(shinyjs)
 library(dplyr)
+#library(dmaps)
 
 ui <- bootstrapPage(theme = "theme.css",
   tags$head(tags$script(src="scripts.js")),
@@ -29,9 +30,12 @@ ui <- bootstrapPage(theme = "theme.css",
     p(id = "ref", '"Tomado de: El libro Cocina"'),
     uiOutput("select_ingUI"),
     uiOutput("ing_count"),
+    uiOutput("selected_ing_list"),
+    br(),
     br(),
     uiOutput("priceUI"),
     br(),
+    #dmapsOutput("select_regionUI"),
     uiOutput("select_regionUI"),
     br(),
     actionButton("volver1", label = "Volver", width = "100%"),
@@ -42,7 +46,7 @@ ui <- bootstrapPage(theme = "theme.css",
       tags$button(
         id = "orderTiempo",
         class = "btn btn-default action-button shiny-bound-input",
-        img(src = "img/Iconos especial cocina-04.png")
+        img(src = "img/iconos especial cocina 50-04.png")
       ),
       br()
     ),
@@ -185,10 +189,13 @@ server <- function(input, output, session) {
   
   getTwitterLink <- function (id) {
     paste0("http://twitter.com/share?url=http://127.0.0.1/?id=", id)
+    #text=
+    #hastags=
   }
   
   getFacebookLink <- function (id) {
     paste0("http://www.facebook.com/sharer.php?u=http://127.0.0.1/?id=", id)
+    #
   }
 
   showRecetaModal <- function(uidInput) {
@@ -203,7 +210,8 @@ server <- function(input, output, session) {
                    twitter = getTwitterLink(uidInput),
                    facebook = getFacebookLink(uidInput),
                    tiempo = ifelse(is.na(receta$tiempo_mins), "", paste(receta$tiempo_mins, " mins")),
-                   hidden = ifelse(is.na(receta$tiempo_mins), "hidden", "")
+                   hiddenTiempo = ifelse(is.na(receta$tiempo_mins), "hidden", ""),
+                   hiddenDificultad = ifelse(is.na(receta$dificultad), "hidden", "")
       ),
       footer = modalButton("Cerrar")
     ))
@@ -220,12 +228,49 @@ server <- function(input, output, session) {
     )
   })
   
+  output$selected_ing_list <- renderUI({
+    checkboxGroupInput("selected_ing_checkbox_group", label = NULL,
+                       choices = input$select_ing,
+                       selected = input$select_ing
+    )
+  })
+  
+  observeEvent(input$selected_ing_checkbox_group, {
+    selectedOptions <- list()
+    if (!is.null(input$selected_ing_checkbox_group))
+      selectedOptions <- input$selected_ing_checkbox_group
+    updateSelectizeInput(session, "select_ing",
+                         selected = selectedOptions)
+  }, ignoreNULL = FALSE)
+  
+  # opts <- list(
+  #   choroLegend = list(labelFormat = ".0f"),
+  #   projectionOpts = list(scale = 3),
+  #   palette = 'Oranges'
+  # )
+  # data2 <- read.csv(system.file("data/carto-2-vars.csv", package = "dmaps"))
+  # data2 <- data2[1:20,]
+  # 
+  # output$select_regionUI <- renderDmaps({
+  #   print(data2)
+  #   dmaps(data2[c("mupio","depto",var)],
+  #         "col_municipalities",
+  #         regionCols = c("mupio","depto"),
+  #         valueCol = "IDH_1_1")
+  #   data <- read.csv(system.file("data/co/ncolegios-departamento.csv",package="dmaps"))
+  #   dmaps(data, "col_departments", regionCols = "departamento", valueCol = "count", opts = opts)
+  #   dmaps(data = NULL,
+  #        "col_departments",
+  #        opts = opts
+  #   )
+  # })
+  
   output$select_regionUI <- renderUI({
     regiones <- recetas %>%
       count(region) %>%
       na.omit()
     regiones_list <- append("Todos", regiones$region)
-    radioButtons("region", 
+    radioButtons("region",
                  "Filtre por región",
                  choices = regiones_list)
   })
@@ -266,7 +311,7 @@ server <- function(input, output, session) {
                              id = d$uid[i],
                              name = d$name[i],
                              tiempo = ifelse(is.na(d$tiempo_mins[i]), "", paste(d$tiempo_mins[i], " mins")),
-                             hidden = ifelse(is.na(d$tiempo_mins[i]), "hidden", "")
+                             hiddenTiempo = ifelse(is.na(d$tiempo_mins[i]), "hidden", "")
         )
         html
       })
@@ -311,7 +356,8 @@ server <- function(input, output, session) {
           ingredientes = createIngredientesText(receta$ing) ,
           twitter = getTwitterLink(recetaId),
           facebook = getFacebookLink(recetaId),
-          hidden = ifelse(is.na(d$tiempo_mins[i]), "hidden", "")
+          hiddenTiempo = ifelse(is.na(d$tiempo_mins[i]), "hidden", ""),
+          hiddenDificultad = ifelse(is.na(d$dificultad[i]), "hidden", "")
         )
         html
       })
