@@ -136,7 +136,11 @@ server <- function(input, output, session) {
     if (session$clientData$url_search != "") {
       url <- parseQueryString(session$clientData$url_search)
       rv$lastClick <- "buscar"
-      showRecetaModal(url$id)
+      if (url$id == "recetas_prohibidas") {
+        #TODO
+      } else {
+        showRecetaModal(url$id)
+      }
     }
   })
   
@@ -200,7 +204,9 @@ server <- function(input, output, session) {
 
   showRecetaModal <- function(uidInput) {
     receta <- recetas %>%
-      filter(uid == uidInput)
+      filter(uid == uidInput) %>%
+      group_by(uid) %>%
+      filter(row_number() == 1)
     showModal(modalDialog(
       title = tags$span(receta$name, id = "modal_title"),
       htmlTemplate("templates/receta_detail.html",
