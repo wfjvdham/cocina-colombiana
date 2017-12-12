@@ -1,8 +1,8 @@
 <button id={{ id }} class="needed" style="width: 100%; background-color: white; text-align: left; border-bottom: 1px solid white;" data-toggle="modal" data-target="#receta_detail">
   <span style="font-size: 15pt; font-style: italic;">{{ name }}</span>
-  <img src="{{ dificultadImage }}" style="max-width: 20px"/>
+  <img src="{{ dificultadImage }}" style="max-width: 20px" {{ hiddenDificultad }}/>
   <span style="font-size: 7pt;">{{ dificultadText }}</span>
-  <img src="img/Iconos especial cocina-04.png" style="max-width: 20px" {{ hidden }}/>
+  <img src="img/Iconos especial cocina-04.png" style="max-width: 20px" {{ hiddenTiempo }}/>
   <span style="font-size: 7pt;">{{ tiempo }}</span>
   <hr style="margin-top: 0px; margin-bottom: 0px; border-top-width: 3px;" />
   <p span style="font-size: 10pt; margin-top: 10px; margin-bottom: 0px; font-weight: 300; font-family: 'Josefin Sans', sans-serif; font-style: normal;">{{ ingredientes }}</p>

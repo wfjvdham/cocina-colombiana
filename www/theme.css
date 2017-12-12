@@ -168,7 +168,7 @@ p {
   width: 100%;
 }
 #select_ingUI .selectize-input .item{
-  background-color: white;
+  display: none;
 }
 #ref {
   font-size: 23px;
