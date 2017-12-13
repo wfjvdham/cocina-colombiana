@@ -31,6 +31,11 @@ p {
   #left, #right {
     width: 45%;
   }
+  #buscarScreen {
+    margin-right: 100px;
+    margin-left: 100px;
+    margin-top: 100px;
+  }
 }
 @media only screen and (max-width: 768px) {
   #volver1, #volver2 {
