@@ -149,6 +149,7 @@ searchNameUI <- function(id) {
   
 selectData <- function(input, output, session, recetas_ing, rv) {
   reactive({
+    print("calculating d")
     d <- recetas_ing %>%
       group_by(uid) %>%
       filter(row_number() == 1) %>%
@@ -186,6 +187,7 @@ selectData <- function(input, output, session, recetas_ing, rv) {
           filter(region == input$region)
       }
     }
+    print("finished calculating d")
     d
   })
 }
