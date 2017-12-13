@@ -70,7 +70,7 @@ p {
   padding-top: 5px;
   padding-left: 10px;
 }
-#mobile-searchName {
+#searchName {
   background-color: #e8e8e8;
   border: none;
   border-bottom-style: none;
@@ -85,6 +85,9 @@ p {
   flex: 1 0 auto;
   align-self: center;
 }
+#searchNameUI {
+  width: 100%;
+}
 #no_results {
   display: flex;
   width: 100%;
@@ -98,7 +101,7 @@ p {
 #search {
   display: flex;
 }
-#mobile-price {
+#price {
   padding-left: 25px;
   padding-right: 25px;
   margin-bottom: 17px;
@@ -135,7 +138,7 @@ p {
   color: #5d5d5d !important;
   font-family: 'Josefin Sans', sans-serif !important;
 }
-#mobile-region .control-label {
+#region .control-label {
   font-weight: bold;
   font-size: 17px;
   color:black;

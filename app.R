@@ -31,14 +31,14 @@ ui <- bootstrapPage(theme = "theme.css",
         p(id = "ref", '"Tomado de: Gran Libro de la Cocina Colombiana"')
       ),
       div(id = "left",
-        select_ingUI("mobile"),
+        uiOutput("select_ingUI"),
         uiOutput("ing_count"),
         uiOutput("selected_ing_list"),
         br(),
         br(),
-        priceUI("mobile"),
+        uiOutput("priceUI"),
         br(),
-        select_regionUI("mobile"),
+        uiOutput("select_regionUI"),
         br(),
         actionButton("volver1", label = "Volver", width = "100%"),
         br()
@@ -60,7 +60,7 @@ ui <- bootstrapPage(theme = "theme.css",
     div(id = "buscarScreen",
       div(id = "search",
           tags$img(src = "img/Iconos especial cocina-01.png"),
-          searchNameUI("mobile")
+          uiOutput("searchNameUI")
       ),
       br(),
       uiOutput("show_receta"),
@@ -69,16 +69,55 @@ ui <- bootstrapPage(theme = "theme.css",
   )
 )
 
+recetas <- readRDS("data/recetas.Rda")
+
 server <- function(input, output, session) {
-  
-  recetas_ing <- readRDS("data/recetas.Rda")
   
   rv <- reactiveValues(
     lastClick = "volver",
     lastClickTiempo = "asc" 
   )
   
-  data <- callModule(selectData, "mobile", recetas_ing, rv)
+  data <- reactive({
+    d <- recetas %>%
+      group_by(uid) %>%
+      filter(row_number() == 1) %>%
+      ungroup()
+    
+    if (rv$lastClick == 'buscar') {
+      tmp <- search_table(input$searchName, d, "name") %>%
+        head(5)
+      hasSearchTerm <- !is.null(input$searchName) && input$searchName != ""
+      if (!hasSearchTerm && session$clientData$url_search != "") {
+        url <- parseQueryString(session$clientData$url_search)
+        if (url$id == "recetas_prohibidas") {
+          tmp <- d %>%
+            filter(prohibida == TRUE)
+        }
+      }
+      d <- tmp
+    } else {
+      if (!is.null(input$select_ing)) {
+        uids_to_show <- recetas %>%
+          filter(ing %in% input$select_ing) %>%
+          count(uid) %>%
+          filter(n == length(input$select_ing))
+        d <- d %>%
+          filter(uid %in% uids_to_show$uid)
+      }
+      
+      if (!is.null(input$price)) {
+        d <- d %>%
+          filter(price <= input$price)
+      }
+      
+      if (!is.null(input$region) && input$region != "Todos") {
+        d <- d %>%
+          filter(region == input$region)
+      }
+    }
+    d
+  })
   
   observeEvent(input$buscar, {
     rv$lastClick <- "buscar"
@@ -131,14 +170,75 @@ server <- function(input, output, session) {
     showRecetaModal(input$last_btn)
   })
   
-  output$selected_ing_list <- callModule(selected_ing_listUI, "mobile")
+  output$select_ingUI <- renderUI({
+    d <- recetas %>%
+      filter(!is.na(ing))
+    choices <- setNames(unique(d$ing), purrr::map(unique(d$ing), firstup))
+    selectizeInput("select_ing", 
+                   label = NULL,
+                   choices = choices, 
+                   width = "100%",
+                   multiple = TRUE, 
+                   options = list(plugins = list("remove_button"),
+                                  placeholder = "Escribe los ingredientes")
+    )
+  })
+    
   
-  callModule(observe_checkbox, "mobile")
+  output$selected_ing_list <- renderUI({
+    choices <- NULL
+    if (!is.null(input$select_ing)) {
+      choices <- setNames(input$select_ing, purrr::map(input$select_ing, firstup))
+    }
+    checkboxGroupInput("selected_ing_checkbox_group", label = NULL,
+                       choices = choices,
+                       selected = input$select_ing
+    )
+  })
   
-  output$ing_count <- callModule(ing_countUI, "mobile")
+  observeEvent(input$selected_ing_checkbox_group, {
+    selectedOptions <- list()
+    if (!is.null(input$selected_ing_checkbox_group))
+      selectedOptions <- input$selected_ing_checkbox_group
+    updateSelectizeInput(session, "select_ing",
+                         selected = selectedOptions)
+  }, ignoreNULL = FALSE)
   
+  output$ing_count <- renderUI({
+    n <- 0
+    if (!is.null(input$selected_ing_checkbox_group)) {
+      n <- length(input$selected_ing_checkbox_group)
+    }
+    htmlTemplate("templates/ing_count.html",
+                 n = n
+    )
+  })
+  
+  output$select_regionUI <- renderUI({
+    regiones <- recetas %>%
+      count(region) %>%
+      na.omit()
+    regiones_list <- append("Todos", regiones$region)
+    radioButtons("region",
+                 "Filtre por región",
+                 choices = regiones_list)
+  })
+  
+  output$priceUI <- renderUI({
+    div(id = "price",
+        sliderInput("price",  min = 0, max = 100,
+                    htmlTemplate("templates/price_label.html"),  
+                    value = 10, width = "100%", pre = "$ ", post = " mil")
+    )
+  })
+  
+  output$searchNameUI <- renderUI({
+    textInput("searchName", placeholder = "BUSCA TU RECETA", 
+              label = NULL, width = "100%")
+  })
+    
   showRecetaModal <- function(uidInput) {
-    receta <- recetas_ing %>%
+    receta <- recetas %>%
       filter(uid == uidInput) %>%
       group_by(uid) %>%
       filter(row_number() == 1)
@@ -186,7 +286,7 @@ server <- function(input, output, session) {
       }
       purrr::map(1:nrow(d), function(i) {
         recetaId <- d$uid[i]
-        receta <- recetas_ing %>%
+        receta <- recetas %>%
           filter(uid == recetaId)
         html <- htmlTemplate("templates/receta_list_detailed.html",
           id = recetaId,
