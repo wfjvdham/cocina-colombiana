@@ -78,43 +78,48 @@ server <- function(input, output, session) {
     lastClickTiempo = "asc" 
   )
   
-  data <- reactive({
+  dataBuscar <- reactive({
     d <- recetas %>%
       group_by(uid) %>%
       filter(row_number() == 1) %>%
       ungroup()
     
-    if (rv$lastClick == 'buscar') {
-      tmp <- search_table(input$searchName, d, "name") %>%
-        head(5)
-      hasSearchTerm <- !is.null(input$searchName) && input$searchName != ""
-      if (!hasSearchTerm && session$clientData$url_search != "") {
-        url <- parseQueryString(session$clientData$url_search)
-        if (url$id == "recetas_prohibidas") {
-          tmp <- d %>%
-            filter(prohibida == TRUE)
-        }
+    tmp <- search_table(input$searchName, d, "name") %>%
+      head(5)
+    hasSearchTerm <- !is.null(input$searchName) && input$searchName != ""
+    if (!hasSearchTerm && session$clientData$url_search != "") {
+      url <- parseQueryString(session$clientData$url_search)
+      if (url$id == "recetas_prohibidas") {
+        tmp <- d %>%
+          filter(prohibida == TRUE)
       }
-      d <- tmp
-    } else {
-      if (!is.null(input$select_ing)) {
-        uids_to_show <- recetas %>%
-          filter(ing %in% input$select_ing) %>%
-          count(uid) %>%
-          filter(n == length(input$select_ing))
-        d <- d %>%
-          filter(uid %in% uids_to_show$uid)
-      }
-      
-      if (!is.null(input$price)) {
-        d <- d %>%
-          filter(price <= input$price)
-      }
-      
-      if (!is.null(input$region) && input$region != "Todos") {
-        d <- d %>%
-          filter(region == input$region)
-      }
+    }
+    tmp
+  })
+  
+  dataCrear <- reactive({
+    d <- recetas %>%
+      group_by(uid) %>%
+      filter(row_number() == 1) %>%
+      ungroup()
+    
+    if (!is.null(input$select_ing)) {
+      uids_to_show <- recetas %>%
+        filter(ing %in% input$select_ing) %>%
+        count(uid) %>%
+        filter(n == length(input$select_ing))
+      d <- d %>%
+        filter(uid %in% uids_to_show$uid)
+    }
+    
+    if (!is.null(input$price)) {
+      d <- d %>%
+        filter(price <= input$price)
+    }
+    
+    if (!is.null(input$region) && input$region != "Todos") {
+      d <- d %>%
+        filter(region == input$region)
     }
     d
   })
@@ -228,7 +233,7 @@ server <- function(input, output, session) {
     div(id = "price",
         sliderInput("price",  min = 0, max = 100,
                     htmlTemplate("templates/price_label.html"),  
-                    value = 10, width = "100%", pre = "$ ", post = " mil")
+                    value = 60, width = "100%", pre = "$ ", post = " mil")
     )
   })
   
@@ -259,8 +264,8 @@ server <- function(input, output, session) {
   }
   
   output$show_receta <- renderUI({
-    d <- data()
-    if (nrow(d) > 0) {
+    d <- dataBuscar()
+    if (nrow(d) > 0 && rv$lastClick == "buscar") {
       purrr::map(1:nrow(d), function(i) {
         html <- htmlTemplate("templates/receta_list.html",
                              id = d$uid[i],
@@ -276,12 +281,12 @@ server <- function(input, output, session) {
   })
 
   output$results <- renderUI({
-    if (!is.null(data()) && nrow(data()) > 0) {
+    if (!is.null(dataCrear()) && nrow(dataCrear()) > 0 && rv$lastClick == "crear") {
       if (rv$lastClickTiempo == "desc") {
-        d <- data() %>%
+        d <- dataCrear() %>%
           arrange(desc(tiempo_mins))
       } else {
-        d <- data() %>%
+        d <- dataCrear() %>%
           arrange(tiempo_mins)
       }
       purrr::map(1:nrow(d), function(i) {
