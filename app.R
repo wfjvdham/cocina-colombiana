@@ -73,7 +73,19 @@ server <- function(input, output, session) {
       filter(row_number() == 1) %>%
       ungroup()
     
-    if (rv$lastClick == 'crear') {
+    if (rv$lastClick == 'buscar') {
+      tmp <- search_table(input$searchName, d, "name") %>%
+        head(5)
+      hasSearchTerm <- !is.null(input$searchName) && input$searchName != ""
+      if (!hasSearchTerm && session$clientData$url_search != "") {
+        url <- parseQueryString(session$clientData$url_search)
+        if (url$id == "recetas_prohibidas") {
+          tmp <- d %>%
+            filter(prohibida == TRUE)
+        }
+      }
+      d <- tmp
+    } else {
       if (!is.null(input$select_ing)) {
         uids_to_show <- recetas_ing %>%
           filter(ing %in% input$select_ing) %>%
@@ -92,24 +104,13 @@ server <- function(input, output, session) {
         d <- d %>%
           filter(region == input$region)
       }
-    } else {
-      tmp <- search_table(input$searchName, d, "name") %>%
-        head(5)
-      hasSearchTerm <- !is.null(input$searchName) && input$searchName != ""
-      if (!hasSearchTerm && session$clientData$url_search != "") {
-        url <- parseQueryString(session$clientData$url_search)
-        if (url$id == "recetas_prohibidas") {
-          tmp <- d %>%
-            filter(prohibida == TRUE)
-        }
-      }
-      d <- tmp
     }
     d
   })
   
   rv <- reactiveValues(
-    lastClick = "volver"
+    lastClick = "volver",
+    lastClickTiempo = "asc" 
   )
   
   observeEvent(input$buscar, {
@@ -129,10 +130,10 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$orderTiempo, {
-    if (rv$lastClick == "desc") {
-      rv$lastClick <- "asc"
+    if (rv$lastClickTiempo == "desc") {
+      rv$lastClickTiempo <- "asc"
     } else {
-      rv$lastClick <- "desc"
+      rv$lastClickTiempo <- "desc"
     }
   })
   
@@ -239,9 +240,12 @@ server <- function(input, output, session) {
   }
 
   output$select_ingUI <- renderUI({
+    d <- recetas_ing %>%
+      filter(!is.na(ing))
+    choices <- setNames(unique(d$ing), purrr::map(unique(d$ing), firstup))
     selectizeInput("select_ing", 
                    label = NULL,
-                   choices = purrr::map(unique(recetas_ing$ing), firstup), 
+                   choices = choices, 
                    width = "100%",
                    multiple = TRUE, 
                    options = list(plugins = list("remove_button"),
@@ -250,9 +254,13 @@ server <- function(input, output, session) {
   })
   
   output$selected_ing_list <- renderUI({
+    choices <- NULL
+    if (!is.null(input$select_ing)) {
+      choices <- setNames(input$select_ing, purrr::map(input$select_ing, firstup))
+    }
     checkboxGroupInput("selected_ing_checkbox_group", label = NULL,
-                       choices = purrr::map(input$select_ing, firstup),
-                       selected = purrr::map(input$select_ing, firstup)
+                       choices = choices,
+                       selected = input$select_ing
     )
   })
   
@@ -349,7 +357,7 @@ server <- function(input, output, session) {
 
   output$results <- renderUI({
     if (!is.null(data()) && nrow(data()) > 0) {
-      if (rv$lastClick == "desc") {
+      if (rv$lastClickTiempo == "desc") {
         d <- data() %>%
           arrange(desc(tiempo_mins))
       } else {
@@ -358,7 +366,7 @@ server <- function(input, output, session) {
       }
       purrr::map(1:nrow(d), function(i) {
         recetaId <- d$uid[i]
-        receta <- data() %>%
+        receta <- recetas_ing %>%
           filter(uid == recetaId)
         html <- htmlTemplate("templates/receta_list_detailed.html",
           id = recetaId,
