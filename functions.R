@@ -134,7 +134,7 @@ priceUI <- function(id) {
   div(id = ns("price"),
     sliderInput(ns("price"),  min = 0, max = 100,
                 htmlTemplate("templates/price_label.html"),  
-                value = 60, width = "100%", pre = "$ ", post = " mil")
+                value = 30, width = "100%", pre = "$ ", post = " mil")
   )
 }
 
@@ -149,7 +149,6 @@ searchNameUI <- function(id) {
   
 selectData <- function(input, output, session, recetas_ing, rv) {
   reactive({
-    print("calculating d")
     d <- recetas_ing %>%
       group_by(uid) %>%
       filter(row_number() == 1) %>%
@@ -187,7 +186,6 @@ selectData <- function(input, output, session, recetas_ing, rv) {
           filter(region == input$region)
       }
     }
-    print("finished calculating d")
     d
   })
 }
