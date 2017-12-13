@@ -2,7 +2,7 @@ library(shiny)
 library(readxl)
 library(shinyjs)
 library(dplyr)
-#library(dmaps)
+source("functions.R")
 
 ui <- bootstrapPage(theme = "theme.css",
   tags$head(tags$script(src="scripts.js")),
@@ -28,15 +28,14 @@ ui <- bootstrapPage(theme = "theme.css",
     img(src = "img/botones ceular-13.png",
         style = "display: block; margin-left: auto; margin-right: auto;"),  
     p(id = "ref", '"Tomado de: El libro Cocina"'),
-    uiOutput("select_ingUI"),
+    select_ingUI("mobile"),
     uiOutput("ing_count"),
     uiOutput("selected_ing_list"),
     br(),
     br(),
-    uiOutput("priceUI"),
+    priceUI("mobile"),
     br(),
-    #dmapsOutput("select_regionUI"),
-    uiOutput("select_regionUI"),
+    select_regionUI("mobile"),
     br(),
     actionButton("volver1", label = "Volver", width = "100%"),
     br(),
@@ -55,7 +54,7 @@ ui <- bootstrapPage(theme = "theme.css",
   div(id = "buscarScreen",
     div(id = "search",
       tags$img(src = "img/Iconos especial cocina-01.png"),
-      uiOutput("searchNameUI")
+      searchNameUI("mobile")
     ),
     br(),
     uiOutput("show_receta"),
@@ -67,51 +66,12 @@ server <- function(input, output, session) {
   
   recetas_ing <- readRDS("data/recetas.Rda")
   
-  data <- reactive({
-    d <- recetas_ing %>%
-      group_by(uid) %>%
-      filter(row_number() == 1) %>%
-      ungroup()
-    
-    if (rv$lastClick == 'buscar') {
-      tmp <- search_table(input$searchName, d, "name") %>%
-        head(5)
-      hasSearchTerm <- !is.null(input$searchName) && input$searchName != ""
-      if (!hasSearchTerm && session$clientData$url_search != "") {
-        url <- parseQueryString(session$clientData$url_search)
-        if (url$id == "recetas_prohibidas") {
-          tmp <- d %>%
-            filter(prohibida == TRUE)
-        }
-      }
-      d <- tmp
-    } else {
-      if (!is.null(input$select_ing)) {
-        uids_to_show <- recetas_ing %>%
-          filter(ing %in% input$select_ing) %>%
-          count(uid) %>%
-          filter(n == length(input$select_ing))
-        d <- d %>%
-          filter(uid %in% uids_to_show$uid)
-      }
-      
-      if (!is.null(input$price)) {
-        d <- d %>%
-          filter(price <= input$price)
-      }
-      
-      if (!is.null(input$region) && input$region != "Todos") {
-        d <- d %>%
-          filter(region == input$region)
-      }
-    }
-    d
-  })
-  
   rv <- reactiveValues(
     lastClick = "volver",
     lastClickTiempo = "asc" 
   )
+  
+  data <- callModule(selectData, "mobile", recetas_ing, rv)
   
   observeEvent(input$buscar, {
     rv$lastClick <- "buscar"
@@ -164,60 +124,6 @@ server <- function(input, output, session) {
     showRecetaModal(input$last_btn)
   })
   
-  getDifcultadImage <- function(dificultad) {
-    if (is.na(dificultad)) {
-      dificultadImage <- ""
-    } else if (dificultad == 1) {
-      dificultadImage <- "img/Iconos especial cocina-06.png"
-    } else if (dificultad == 2) {
-      dificultadImage <- "img/Iconos especial cocina-07.png"
-    } else if (dificultad == 3) {
-      dificultadImage <- "img/Iconos especial cocina-08.png"
-    }
-    dificultadImage
-  }
-  
-  getDifcultadText <- function(dificultad) {
-    if (is.na(dificultad)) {
-      dificultadText <- ""
-    } else if (dificultad == 1) {
-      dificultadText <- "Fácil"
-    } else if (dificultad == 2) {
-      dificultadText <- "Normal"
-    } else if (dificultad == 3) {
-      dificultadText <- "Difícil"
-    }
-    dificultadText
-  }
-  
-  firstup <- function(x) {
-    substr(x, 1, 1) <- toupper(substr(x, 1, 1))
-    x
-  }
-  
-  createIngredientesText <- function(ingredientes) {
-    result <- ingredientes %>%
-      paste(collapse=', ' ) 
-    if (result == "NA") {
-      ""
-    } else {
-      result %>%
-        stringr::str_sub(end = -1L) %>%
-        firstup()
-    }
-  }
-  
-  getTwitterLink <- function (id) {
-    paste0("http://twitter.com/share?url=http://127.0.0.1/?id=", id)
-    #text=
-    #hastags=
-  }
-  
-  getFacebookLink <- function (id) {
-    paste0("http://www.facebook.com/sharer.php?u=http://127.0.0.1/?id=", id)
-    #
-  }
-
   showRecetaModal <- function(uidInput) {
     receta <- recetas_ing %>%
       filter(uid == uidInput) %>%
@@ -238,105 +144,12 @@ server <- function(input, output, session) {
       footer = modalButton("Cerrar")
     ))
   }
-
-  output$select_ingUI <- renderUI({
-    d <- recetas_ing %>%
-      filter(!is.na(ing))
-    choices <- setNames(unique(d$ing), purrr::map(unique(d$ing), firstup))
-    selectizeInput("select_ing", 
-                   label = NULL,
-                   choices = choices, 
-                   width = "100%",
-                   multiple = TRUE, 
-                   options = list(plugins = list("remove_button"),
-                                  placeholder = "Escribe los ingredientes")
-    )
-  })
   
-  output$selected_ing_list <- renderUI({
-    choices <- NULL
-    if (!is.null(input$select_ing)) {
-      choices <- setNames(input$select_ing, purrr::map(input$select_ing, firstup))
-    }
-    checkboxGroupInput("selected_ing_checkbox_group", label = NULL,
-                       choices = choices,
-                       selected = input$select_ing
-    )
-  })
+  output$selected_ing_list <- callModule(selected_ing_listUI, "mobile")
   
-  observeEvent(input$selected_ing_checkbox_group, {
-    selectedOptions <- list()
-    if (!is.null(input$selected_ing_checkbox_group))
-      selectedOptions <- input$selected_ing_checkbox_group
-    updateSelectizeInput(session, "select_ing",
-                         selected = selectedOptions)
-  }, ignoreNULL = FALSE)
+  callModule(observe_checkbox, "mobile")
   
-  output$ing_count <- renderUI({
-    n <- 0
-    if (!is.null(input$selected_ing_checkbox_group)) {
-      n <- length(input$selected_ing_checkbox_group)
-    }
-    htmlTemplate("templates/ing_count.html",
-                 n = n
-    )
-  })
-  
-  # opts <- list(
-  #   choroLegend = list(labelFormat = ".0f"),
-  #   projectionOpts = list(scale = 3),
-  #   palette = 'Oranges'
-  # )
-  # data2 <- read.csv(system.file("data/carto-2-vars.csv", package = "dmaps"))
-  # data2 <- data2[1:20,]
-  # 
-  # output$select_regionUI <- renderDmaps({
-  #   print(data2)
-  #   dmaps(data2[c("mupio","depto",var)],
-  #         "col_municipalities",
-  #         regionCols = c("mupio","depto"),
-  #         valueCol = "IDH_1_1")
-  #   data <- read.csv(system.file("data/co/ncolegios-departamento.csv",package="dmaps"))
-  #   dmaps(data, "col_departments", regionCols = "departamento", valueCol = "count", opts = opts)
-  #   dmaps(data = NULL,
-  #        "col_departments",
-  #        opts = opts
-  #   )
-  # })
-  
-  output$select_regionUI <- renderUI({
-    regiones <- recetas_ing %>%
-      count(region) %>%
-      na.omit()
-    regiones_list <- append("Todos", regiones$region)
-    radioButtons("region",
-                 "Filtre por región",
-                 choices = regiones_list)
-  })
-  
-  output$priceUI <- renderUI({
-    sliderInput("price",  min = 0, max = 100,
-                htmlTemplate("templates/price_label.html"),  
-                value = 60, width = "100%", pre = "$ ", post = " mil")
-  })
-  
-  output$searchNameUI <- renderUI({
-    textInput("searchName", placeholder = "BUSCA TU RECETA", label = NULL, width = "100%")
-  })
-  
-  search_table <- function(query, table, props){
-    if (is.null(query) || query == "")
-      return(table)
-    found <- table %>% 
-      select(props) %>% 
-      filter(rowSums(mutate_all(., funs(grepl(query,.,ignore.case = TRUE)))) >= 1L)
-    table %>%
-      filter(name %in% found$name)
-  }
-  
-  noResults <- function() {
-    htmlTemplate("templates/no_results.html")
-  }
+  output$ing_count <- callModule(ing_countUI, "mobile")
   
   output$show_receta <- renderUI({
     d <- data()
@@ -389,4 +202,3 @@ server <- function(input, output, session) {
 }
 
 shinyApp(ui = ui, server = server)
-

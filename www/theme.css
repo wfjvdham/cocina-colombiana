@@ -53,7 +53,7 @@ p {
   padding-top: 5px;
   padding-left: 10px;
 }
-#searchName {
+#mobile-searchName {
   background-color: #e8e8e8;
   border: none;
   border-bottom-style: none;
@@ -65,6 +65,8 @@ p {
   border-color: white;
   border-radius: 0;
   box-shadow: none;
+  flex: 1 0 auto;
+  align-self: center;
 }
 #no_results {
   display: flex;
@@ -79,13 +81,10 @@ p {
 #search {
   display: flex;
 }
-#searchNameUI {
-  flex: 1 0 auto;
-  align-self: center;
-}
-#priceUI {
+#mobile-price {
   padding-left: 25px;
   padding-right: 25px;
+  margin-bottom: 17px;
 }
 .shiny-input-container {
   width: 100%;
@@ -119,15 +118,12 @@ p {
   color: #5d5d5d !important;
   font-family: 'Josefin Sans', sans-serif !important;
 }
-#region .control-label {
+#mobile-region .control-label {
   font-weight: bold;
   font-size: 17px;
   color:black;
   font-family: 'Josefin Slab', sans-serif;
   border-bottom: 3px solid white !important;
-}
-#priceUI .control-label{
-  margin-bottom: 17px;
 }
 #orderTiempo {
   border: none;
@@ -156,18 +152,18 @@ p {
   color: black;
   font-family: 'Josefin Slab', sans-serif;
 }
-#select_ingUI .selectize-input {
+.form-control.selectize-control .selectize-input {
   border-radius: 0pt;
   border: 1pt solid black;
   background-color: #e8e8e8;
   padding-top: 10px;
 }
-#select_ingUI .selectize-input input {
+.form-control.selectize-control .selectize-input input {
   color: black;
   font-size: 15pt;
   width: 100%;
 }
-#select_ingUI .selectize-input .item {
+.form-control.selectize-control .selectize-input .item {
   display: none;
 }
 #ref {
