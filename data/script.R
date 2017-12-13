@@ -1,5 +1,6 @@
 library(dplyr)
 library(readxl)
+library(readr)
 
 recetas <- read_excel('./data/recetas.xlsx')
 recetas_ing <- read_excel('./data/recetas-ing.xlsx')
