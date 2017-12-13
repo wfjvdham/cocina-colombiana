@@ -289,23 +289,26 @@ server <- function(input, output, session) {
         d <- dataCrear() %>%
           arrange(tiempo_mins)
       }
-      purrr::map(1:nrow(d), function(i) {
-        recetaId <- d$uid[i]
-        receta <- recetas %>%
-          filter(uid == recetaId)
-        html <- htmlTemplate("templates/receta_list_detailed.html",
-          id = recetaId,
-          name = d$name[i],
-          dificultadImage = getDifcultadImage(d$dificultad[i]),
-          dificultadText = getDifcultadText(d$dificultad[i]),
-          tiempo = ifelse(is.na(d$tiempo_mins[i]), "", paste(d$tiempo_mins[i], " mins")),
-          ingredientes = createIngredientesText(receta$ing) ,
-          twitter = getTwitterLink(recetaId),
-          facebook = getFacebookLink(recetaId),
-          hiddenTiempo = ifelse(is.na(d$tiempo_mins[i]), "hidden", ""),
-          hiddenDificultad = ifelse(is.na(d$dificultad[i]), "hidden", "")
-        )
-        html
+      withProgress(message = 'Leyendo las recetas', value = 0, {
+        purrr::map(1:nrow(d), function(i) {
+          incProgress(2/nrow(d), detail = paste("receta ", i))
+          recetaId <- d$uid[i]
+          receta <- recetas %>%
+            filter(uid == recetaId)
+          html <- htmlTemplate("templates/receta_list_detailed.html",
+            id = recetaId,
+            name = d$name[i],
+            dificultadImage = getDifcultadImage(d$dificultad[i]),
+            dificultadText = getDifcultadText(d$dificultad[i]),
+            tiempo = ifelse(is.na(d$tiempo_mins[i]), "", paste(d$tiempo_mins[i], " mins")),
+            ingredientes = createIngredientesText(receta$ing) ,
+            twitter = getTwitterLink(recetaId),
+            facebook = getFacebookLink(recetaId),
+            hiddenTiempo = ifelse(is.na(d$tiempo_mins[i]), "hidden", ""),
+            hiddenDificultad = ifelse(is.na(d$dificultad[i]), "hidden", "")
+          )
+          html
+        })
       })
     } else {
       noResults()
