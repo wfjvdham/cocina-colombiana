@@ -255,6 +255,7 @@ server <- function(input, output, session) {
                    dificultadText = getDifcultadText(receta$dificultad),
                    twitter = getTwitterLink(uidInput),
                    facebook = getFacebookLink(uidInput),
+                   pinterest = getPinterestLink(uidInput),
                    tiempo = ifelse(is.na(receta$tiempo_mins), "", paste(receta$tiempo_mins, " mins")),
                    hiddenTiempo = ifelse(is.na(receta$tiempo_mins), "hidden", ""),
                    hiddenDificultad = ifelse(is.na(receta$dificultad), "hidden", "")
@@ -291,7 +292,7 @@ server <- function(input, output, session) {
       }
       withProgress(message = 'Leyendo las recetas', value = 0, {
         purrr::map(1:nrow(d), function(i) {
-          incProgress(2/nrow(d), detail = paste("receta ", i))
+          incProgress(1/nrow(d), detail = paste("receta ", i))
           recetaId <- d$uid[i]
           receta <- recetas %>%
             filter(uid == recetaId)
@@ -304,6 +305,7 @@ server <- function(input, output, session) {
             ingredientes = createIngredientesText(receta$ing) ,
             twitter = getTwitterLink(recetaId),
             facebook = getFacebookLink(recetaId),
+            pinterest = getPinterestLink(recetaId),
             hiddenTiempo = ifelse(is.na(d$tiempo_mins[i]), "hidden", ""),
             hiddenDificultad = ifelse(is.na(d$dificultad[i]), "hidden", "")
           )

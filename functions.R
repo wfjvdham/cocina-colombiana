@@ -52,6 +52,10 @@ getFacebookLink <- function (id) {
   #
 }
 
+getPinterestLink <- function (id) {
+  paste0("http://pinterest.com/pin/create/button/?url=", id)
+}
+
 search_table <- function(query, table, props){
   if (is.null(query) || query == "")
     return(table)
