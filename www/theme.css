@@ -16,6 +16,27 @@ p {
   color: #5d5d5d;
   font-family: 'Josefin Sans', sans-serif;
 }
+#crearScreen {
+  display: flex;
+  flex-direction: column;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+@media only screen and (min-width: 768px) {
+  #crearScreen {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  #left, #right {
+    width: 45%;
+  }
+}
+@media only screen and (max-width: 768px) {
+  #volver1, #volver2 {
+    display: none;
+  }
+}
 #buttonScreen {
   display: flex;
   position: absolute;
@@ -24,10 +45,6 @@ p {
   transform: translateY(-50%);
   justify-content: center;
   flex-direction: column;
-}
-#crearScreen {
-  padding-left: 15px;
-  padding-right: 15px;
 }
 #crear, #buscar {
   border: none;
@@ -191,4 +208,8 @@ p {
   padding-top: 10px;
   margin-bottom: 0px;
   margin-left: 14px;
+}
+#results {
+  overflow: scroll;
+  height: 490px;
 }

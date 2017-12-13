@@ -7,58 +7,65 @@ source("functions.R")
 ui <- bootstrapPage(theme = "theme.css",
   tags$head(tags$script(src="scripts.js")),
   useShinyjs(),
-  div(id = "buttonScreen", 
+  div(id = "mobile",
+    div(id = "buttonScreen", 
       style = "display: flex; width: 100%; text-align: center; justify-content: center;",
-    tags$button(
-      id = "buscar",
-      class = "btn btn-default action-button shiny-bound-input",
-      width = "100%",
-      img(src = "img/botones ceular-12.png")
-    ),
-    hr(),
-    tags$button(
-      id = "crear", 
-      style = "display: flex; width: 100%; text-align: center; justify-content: center;",
-      class = "btn btn-default action-button shiny-bound-input",
-      width = "100%",
-      img(src = "img/botones ceular-13.png")
-    )
-  ),
-  div(id = "crearScreen", class = "crearScreen",
-    img(src = "img/botones ceular-13.png",
-        style = "display: block; margin-left: auto; margin-right: auto;"),  
-    p(id = "ref", '"Tomado de: El libro Cocina"'),
-    select_ingUI("mobile"),
-    uiOutput("ing_count"),
-    uiOutput("selected_ing_list"),
-    br(),
-    br(),
-    priceUI("mobile"),
-    br(),
-    select_regionUI("mobile"),
-    br(),
-    actionButton("volver1", label = "Volver", width = "100%"),
-    br(),
-    div(id = "recetas_title",
-      div(id = "recetas", "Recetas"),
-      br(),
       tags$button(
-        id = "orderTiempo",
+        id = "buscar",
         class = "btn btn-default action-button shiny-bound-input",
-        img(src = "img/iconos especial cocina 50-04.png")
+        width = "100%",
+        img(src = "img/botones ceular-12.png")
       ),
-      br()
+      hr(),
+      tags$button(
+        id = "crear", 
+        style = "display: flex; width: 100%; text-align: center; justify-content: center;",
+        class = "btn btn-default action-button shiny-bound-input",
+        width = "100%",
+        img(src = "img/botones ceular-13.png")
+      )
     ),
-    uiOutput('results')
-  ),
-  div(id = "buscarScreen",
-    div(id = "search",
-      tags$img(src = "img/Iconos especial cocina-01.png"),
-      searchNameUI("mobile")
+    div(id = "crearScreen", class = "crearScreen",
+      div(style = "width: 100%;",
+        img(src = "img/botones ceular-13.png", style = "display: block; margin-left: auto; margin-right: auto;"),  
+        p(id = "ref", '"Tomado de: Gran Libro de la Cocina Colombiana"')
+      ),
+      div(id = "left",
+        select_ingUI("mobile"),
+        uiOutput("ing_count"),
+        uiOutput("selected_ing_list"),
+        br(),
+        br(),
+        priceUI("mobile"),
+        br(),
+        select_regionUI("mobile"),
+        br(),
+        actionButton("volver1", label = "Volver", width = "100%"),
+        br()
+      ),
+      div(id = "right",
+        div(id = "recetas_title",
+            div(id = "recetas", "Recetas"),
+            br(),
+            tags$button(
+              id = "orderTiempo",
+              class = "btn btn-default action-button shiny-bound-input",
+              img(src = "img/iconos especial cocina 50-04.png")
+            ),
+            br()
+        ),
+        uiOutput('results')
+      )
     ),
-    br(),
-    uiOutput("show_receta"),
-    actionButton("volver2", label = "Volver", width = "100%")
+    div(id = "buscarScreen",
+      div(id = "search",
+          tags$img(src = "img/Iconos especial cocina-01.png"),
+          searchNameUI("mobile")
+      ),
+      br(),
+      uiOutput("show_receta"),
+      actionButton("volver2", label = "Volver", width = "100%")
+    )
   )
 )
 
@@ -124,6 +131,12 @@ server <- function(input, output, session) {
     showRecetaModal(input$last_btn)
   })
   
+  output$selected_ing_list <- callModule(selected_ing_listUI, "mobile")
+  
+  callModule(observe_checkbox, "mobile")
+  
+  output$ing_count <- callModule(ing_countUI, "mobile")
+  
   showRecetaModal <- function(uidInput) {
     receta <- recetas_ing %>%
       filter(uid == uidInput) %>%
@@ -144,12 +157,6 @@ server <- function(input, output, session) {
       footer = modalButton("Cerrar")
     ))
   }
-  
-  output$selected_ing_list <- callModule(selected_ing_listUI, "mobile")
-  
-  callModule(observe_checkbox, "mobile")
-  
-  output$ing_count <- callModule(ing_countUI, "mobile")
   
   output$show_receta <- renderUI({
     d <- data()
