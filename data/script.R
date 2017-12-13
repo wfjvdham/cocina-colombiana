@@ -3,6 +3,8 @@ library(readxl)
 
 recetas <- read_excel('./data/recetas.xlsx')
 recetas_ing <- read_excel('./data/recetas-ing.xlsx')
+recetas_prohibidas <- read_csv('./data/Recetas prohibidas - Hoja 1.csv', 
+                               col_names = FALSE)
 
 #summary(recetas)
 
@@ -18,7 +20,8 @@ recetas <- recetas %>%
          price = runif(nrow(recetas), 1, 100)) %>%
   left_join(recetas_ing, by = 'uid') %>%
   select(uid, price, name = name.x, region, depto, instruc, dificultad, tiempo_mins, ing) %>%
-  left_join(dedeptoRank, by = 'depto')
+  left_join(dedeptoRank, by = 'depto') %>%
+  mutate(prohibida = ifelse(.$name %in% recetas_prohibidas$X1, TRUE, FALSE))
 
 saveRDS(recetas, file = "data/recetas.Rda")
 

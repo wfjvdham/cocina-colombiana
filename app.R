@@ -65,28 +65,45 @@ ui <- bootstrapPage(theme = "theme.css",
 
 server <- function(input, output, session) {
   
-  recetas <- readRDS("data/recetas.Rda")
+  recetas_ing <- readRDS("data/recetas.Rda")
   
   data <- reactive({
-    d <- recetas 
+    d <- recetas_ing %>%
+      group_by(uid) %>%
+      filter(row_number() == 1) %>%
+      ungroup()
     
-    if (!is.null(input$select_ing)) {
-      uids_to_show <- d %>%
-        filter(ing %in% input$select_ing) %>%
-        count(uid) %>%
-        filter(n == length(input$select_ing))
-      d <- d %>%
-        filter(uid %in% uids_to_show$uid)
-    }
-    
-    if (!is.null(input$price)) {
-      d <- d %>%
-        filter(price <= input$price)
-    }
-    
-    if (!is.null(input$region) && input$region != "Todos") {
-      d <- d %>%
-        filter(region == input$region)
+    if (rv$lastClick == 'crear') {
+      if (!is.null(input$select_ing)) {
+        uids_to_show <- recetas_ing %>%
+          filter(ing %in% input$select_ing) %>%
+          count(uid) %>%
+          filter(n == length(input$select_ing))
+        d <- d %>%
+          filter(uid %in% uids_to_show$uid)
+      }
+      
+      if (!is.null(input$price)) {
+        d <- d %>%
+          filter(price <= input$price)
+      }
+      
+      if (!is.null(input$region) && input$region != "Todos") {
+        d <- d %>%
+          filter(region == input$region)
+      }
+    } else {
+      tmp <- search_table(input$searchName, d, "name") %>%
+        head(5)
+      hasSearchTerm <- !is.null(input$searchName) && input$searchName != ""
+      if (!hasSearchTerm && session$clientData$url_search != "") {
+        url <- parseQueryString(session$clientData$url_search)
+        if (url$id == "recetas_prohibidas") {
+          tmp <- d %>%
+            filter(prohibida == TRUE)
+        }
+      }
+      d <- tmp
     }
     d
   })
@@ -132,13 +149,11 @@ server <- function(input, output, session) {
     }
   })
   
-  observeEvent(session$clientData$url_search, {
+  observeEvent(session$clientData$url_search, once = TRUE, {
     if (session$clientData$url_search != "") {
       url <- parseQueryString(session$clientData$url_search)
       rv$lastClick <- "buscar"
-      if (url$id == "recetas_prohibidas") {
-        #TODO
-      } else {
+      if (url$id != "recetas_prohibidas") {
         showRecetaModal(url$id)
       }
     }
@@ -203,7 +218,7 @@ server <- function(input, output, session) {
   }
 
   showRecetaModal <- function(uidInput) {
-    receta <- recetas %>%
+    receta <- recetas_ing %>%
       filter(uid == uidInput) %>%
       group_by(uid) %>%
       filter(row_number() == 1)
@@ -226,7 +241,7 @@ server <- function(input, output, session) {
   output$select_ingUI <- renderUI({
     selectizeInput("select_ing", 
                    label = NULL,
-                   choices = purrr::map(unique(recetas$ing), firstup), 
+                   choices = purrr::map(unique(recetas_ing$ing), firstup), 
                    width = "100%",
                    multiple = TRUE, 
                    options = list(plugins = list("remove_button"),
@@ -282,7 +297,7 @@ server <- function(input, output, session) {
   # })
   
   output$select_regionUI <- renderUI({
-    regiones <- recetas %>%
+    regiones <- recetas_ing %>%
       count(region) %>%
       na.omit()
     regiones_list <- append("Todos", regiones$region)
@@ -304,7 +319,6 @@ server <- function(input, output, session) {
   search_table <- function(query, table, props){
     if (is.null(query) || query == "")
       return(table)
-    
     found <- table %>% 
       select(props) %>% 
       filter(rowSums(mutate_all(., funs(grepl(query,.,ignore.case = TRUE)))) >= 1L)
@@ -317,10 +331,7 @@ server <- function(input, output, session) {
   }
   
   output$show_receta <- renderUI({
-    d <- search_table(input$searchName, data(), "name") %>%
-      group_by(uid) %>%
-      filter(row_number() == 1) %>%
-      head(5)
+    d <- data()
     if (nrow(d) > 0) {
       purrr::map(1:nrow(d), function(i) {
         html <- htmlTemplate("templates/receta_list.html",
@@ -338,15 +349,11 @@ server <- function(input, output, session) {
 
   output$results <- renderUI({
     if (!is.null(data()) && nrow(data()) > 0) {
-      d <- data() %>%
-        group_by(uid) %>%
-        filter(row_number() == 1) %>%
-        select(uid, name, region, dificultad, tiempo_mins)
       if (rv$lastClick == "desc") {
-        d <- d %>%
+        d <- data() %>%
           arrange(desc(tiempo_mins))
       } else {
-        d <- d %>%
+        d <- data() %>%
           arrange(tiempo_mins)
       }
       purrr::map(1:nrow(d), function(i) {
