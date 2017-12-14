@@ -1,21 +1,21 @@
-<button id={{ id }} class="needed" style="width: 100%; background-color: white; text-align: left; border-bottom: 1px solid white;" data-toggle="modal" data-target="#receta_detail">
-  <span style="font-size: 15pt; font-style: italic;">{{ name }}</span>
-  <img src="{{ dificultadImage }}" style="max-width: 20px" {{ hiddenDificultad }}/>
-  <span style="font-size: 7pt;">{{ dificultadText }}</span>
-  <img src="img/Iconos especial cocina-04.png" style="max-width: 20px" {{ hiddenTiempo }}/>
-  <span style="font-size: 7pt;">{{ tiempo }}</span>
-  <hr style="margin-top: 0px; margin-bottom: 0px; border-top-width: 3px;" />
-  <p span style="font-size: 10pt; margin-top: 10px; margin-bottom: 0px; font-weight: 300; font-family: 'Josefin Sans', sans-serif; font-style: normal;">{{ ingredientes }}</p>
+<button id={{ id }} class="needed white" data-toggle="modal" data-target="#receta_detail">
+  <span class="font_15p font_italic">{{ name }}</span>
+  <img src="{{ dificultadImage }}" class="image_small" {{ hiddenDificultad }}/>
+  <span class="font_7">{{ dificultadText }}</span>
+  <img src="img/Iconos especial cocina-04.png" class="image_small" {{ hiddenTiempo }}/>
+  <span class="font_7">{{ tiempo }}</span>
+  <hr class="line"/>
+  <p span class="font_10_sans">{{ ingredientes }}</p>
 </button>
-<div style="margin-bottom: 0px; background-color: white; margin-left: 0px; padding-left: 6px; padding-bottom: 25px;">
+<div class="padding_bottom">
   <a href="{{ twitter }}">
-    <img src="img/Iconos especial cocina-12.png" style="max-width: 15px; margin-right: 2px;"/>
+    <img src="img/Iconos especial cocina-12.png" class="image_smaller"/>
   </a>
   <a href="{{ facebook }}">
-    <img src="img/Iconos especial cocina-09.png" style="max-width: 15px; margin-right: 2px;"/>
+    <img src="img/Iconos especial cocina-09.png" class="image_smaller"/>
   </a>
   <a href="{{ pinterest }}">
-    <img src="img/Iconos especial cocina-11.png" style="max-width: 15px; margin-right: 2px;"/>
+    <img src="img/Iconos especial cocina-11.png" class="image_smaller"/>
   </a>
   <br />
 </div>

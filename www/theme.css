@@ -133,12 +133,7 @@ p {
 .irs-grid-text {
   display: none !important;
 }
-.irs-min, .irs-max {
-  background: none !important;
-  color: #5d5d5d !important;
-  font-family: 'Josefin Sans', sans-serif !important;
-}
-.irs-single {
+.irs-min, .irs-max, .irs-single {
   background: none !important;
   color: #5d5d5d !important;
   font-family: 'Josefin Sans', sans-serif !important;
@@ -236,10 +231,46 @@ p {
 .font_15 {
   font-size: 15pt;
 }
+.font_7 {
+  font-size: 7pt;
+}
 .image_small {
   max-width: 20px;
+}
+.image_smaller {
+  max-width: 15px;
+  margin-right: 2px;
 }
 .flex_center {
   display: flex;
   align-items: center;
+}
+.font_italic {
+  font-style: italic;
+}
+.white {
+  width: 100%;
+  background-color: white;
+  text-align: left;
+  border-bottom: 1px solid white;
+}
+.line {
+  margin-top: 0px;
+  margin-bottom: 0px;
+  border-top-width: 3px;
+}
+.font_10_sans {
+  font-size: 10pt;
+  margin-top: 10px;
+  margin-bottom: 0px;
+  font-weight: 300;
+  font-family: 'Josefin Sans', sans-serif;
+  font-style: normal;
+}
+.padding_bottom {
+  margin-bottom: 0px;
+  background-color: white;
+  margin-left: 0px;
+  padding-left: 6px;
+  padding-bottom: 25px;
 }
