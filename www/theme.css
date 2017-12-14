@@ -161,12 +161,7 @@ p {
   align-items: center;
   padding-bottom: 10px;
 }
-#recetas_title .btn-default:hover {
-  background-color: white !important;
-  color: white !important;
-  border-color: white !important;
-}
-#recetas_title .btn-default {
+#recetas_title .btn-default:hover, #recetas_title .btn-default {
   background-color: white !important;
   color: white !important;
   border-color: white !important;
@@ -220,4 +215,31 @@ p {
 #results {
   overflow: scroll;
   height: 490px;
+}
+.margin_color {
+  width: 100%;
+  text-align: left;
+  color: #5d5d5d;
+  margin-left: 15px;
+  margin-right: 15px;
+}
+.underline {
+  display: flex;
+  border-bottom: 1px solid white;
+}
+.margin_right {
+  margin-right: 2px
+}
+.font_10 {
+  font-size: 10pt;
+}
+.font_15 {
+  font-size: 15pt;
+}
+.image_small {
+  max-width: 20px;
+}
+.flex_center {
+  display: flex;
+  align-items: center;
 }
