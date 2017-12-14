@@ -256,6 +256,7 @@ server <- function(input, output, session) {
                    twitter = getTwitterLink(uidInput),
                    facebook = getFacebookLink(uidInput),
                    pinterest = getPinterestLink(uidInput),
+                   whatsapp = getWhatsAppLink(uidInput),
                    tiempo = ifelse(is.na(receta$tiempo_mins), "", paste(receta$tiempo_mins, " mins")),
                    hiddenTiempo = ifelse(is.na(receta$tiempo_mins), "hidden", ""),
                    hiddenDificultad = ifelse(is.na(receta$dificultad), "hidden", "")
@@ -306,6 +307,7 @@ server <- function(input, output, session) {
             twitter = getTwitterLink(recetaId),
             facebook = getFacebookLink(recetaId),
             pinterest = getPinterestLink(recetaId),
+            whatsapp = getWhatsAppLink(recetaId),
             hiddenTiempo = ifelse(is.na(d$tiempo_mins[i]), "hidden", ""),
             hiddenDificultad = ifelse(is.na(d$dificultad[i]), "hidden", "")
           )

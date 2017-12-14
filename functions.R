@@ -56,6 +56,10 @@ getPinterestLink <- function (id) {
   paste0("http://pinterest.com/pin/create/button/?url=", id)
 }
 
+getWhatsAppLink <- function (id) {
+  paste0("https://api.whatsapp.com/send?text=http://127.0.0.1/?id=", id)
+}
+
 search_table <- function(query, table, props){
   if (is.null(query) || query == "")
     return(table)

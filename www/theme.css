@@ -36,6 +36,9 @@ p {
     margin-left: 100px;
     margin-top: 100px;
   }
+  .not_show {
+    display: none;
+  }
 }
 @media only screen and (max-width: 768px) {
   #volver1, #volver2 {
