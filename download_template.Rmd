@@ -6,4 +6,6 @@ output:
     keep_tex: true
 name: "`r params$name`"
 instruc: "`r params$instruc`"
+column1: "`r params$column1`"
+column2: "`r params$column2`"
 ---

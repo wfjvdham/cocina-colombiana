@@ -2,6 +2,7 @@ library(shiny)
 library(readxl)
 library(shinyjs)
 library(dplyr)
+library(stringr)
 source("functions.R")
 
 ui <- bootstrapPage(
@@ -287,10 +288,6 @@ server <- function(input, output, session) {
   })
   
   fillDownloadData <- function (id, namespace = "List") {
-    receta <- recetas %>%
-      filter(uid == id) %>%
-      filter(row_number() == 1)
-    
     output[[paste0("downloadButton", namespace, id)]] <- renderUI({
       downloadLink(paste0("downloadData", namespace, id), 
                    div(style="display:flex; font-weight: 300; font-size: 8pt;",
@@ -300,12 +297,28 @@ server <- function(input, output, session) {
       )
     })
     
+    receta <- recetas %>%
+      filter(uid == id) %>%
+      filter(row_number() == 1)
+    
+    ings_lines <-str_split(receta$ings, "·") 
+    ings_lines_length <- length(ings_lines[[1]])
+    n_column1 <- ings_lines_length - round(ings_lines_length / 2)
+    column1 <- ings_lines[[1]][1:n_column1] %>%
+      str_trim() %>%
+      paste(collapse="\n\n ")
+    column2 <- ings_lines[[1]][(n_column1+1):ings_lines_length] %>%
+      str_trim() %>%
+      paste(collapse="\n\n ")
+    
     output[[paste0("downloadData", namespace, id)]] <- downloadHandler(
       paste0('receta_', id, '.pdf'),
       content = function(file) {
         params <- list(
           name = receta$name,
-          instruc = receta$instruc
+          instruc = receta$instruc,
+          column1 = column1,
+          column2 = column2
         )
         rmarkdown::render("download_template.Rmd",
                           params = params,
