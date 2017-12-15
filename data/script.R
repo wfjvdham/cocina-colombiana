@@ -20,7 +20,7 @@ recetas <- recetas %>%
          tiempo_mins = tiempo_mins + tiempo_dias * 24 * 60,
          price = runif(nrow(recetas), 1, 100)) %>%
   left_join(recetas_ing, by = 'uid') %>%
-  select(uid, price, name = name.x, region, depto, instruc, dificultad, tiempo_mins, ing) %>%
+  select(uid, price, name = name.x, region, depto, instruc, dificultad, tiempo_mins, ing, ings) %>%
   left_join(dedeptoRank, by = 'depto') %>%
   mutate(prohibida = ifelse(.$name %in% recetas_prohibidas$X1, TRUE, FALSE))
 

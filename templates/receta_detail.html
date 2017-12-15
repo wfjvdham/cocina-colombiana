@@ -1,19 +1,22 @@
-<img src="{{ dificultadImage }}" style="max-width: 20px; margin-right: 2px" {{ hiddenDificultad }}/>
-<span style="font-size: 10pt; margin-right: 2px">{{ dificultadText }}</span>
-<img src="img/Iconos especial cocina-04.png" style="max-width: 20px; margin-right: 2px" {{ hiddenTiempo }}/>
-<span style="font-size: 10pt; margin-right: 2px">{{ tiempo }}</span>
-<a href="{{ twitter }}">
-  <img src="img/Iconos especial cocina-12.png" class="image_small"/>
-</a>
-<a href="{{ facebook }}">
-  <img src="img/Iconos especial cocina-09.png" class="image_small"/>
-</a>
-<a href="{{ pinterest }}">
-  <img src="img/Iconos especial cocina-11.png" class="image_small"/>
-</a>
-<a href="{{ whatsapp }}" class="not_show">
-  <img src="img/Iconos especial cocina-10.png" class="image_small"/>
-</a>
+<div style="display: flex;">
+  <img src="{{ dificultadImage }}" class="image_small" style="margin-right: 2px" {{ hiddenDificultad }}/>
+  <span style="font-size: 10pt; margin-right: 2px">{{ dificultadText }}</span>
+  <img src="img/Iconos especial cocina-04.png" class="image_small" style="margin-right: 2px" {{ hiddenTiempo }}/>
+  <span style="font-size: 10pt; margin-right: 2px">{{ tiempo }}</span>
+  <a href="{{ twitter }}">
+    <img src="img/Iconos especial cocina-12.png" class="image_small"/>
+  </a>
+  <a href="{{ facebook }}">
+    <img src="img/Iconos especial cocina-09.png" class="image_small"/>
+  </a>
+  <a href="{{ pinterest }}">
+    <img src="img/Iconos especial cocina-11.png" class="image_small"/>
+  </a>
+  <a href="{{ whatsapp }}" class="not_show">
+    <img src="img/Iconos especial cocina-10.png" class="image_small"/>
+  </a>
+  {{ download }}
+</div>
 <hr style="margin-top: 5px;" />
 <p style="font-size: 10pt; font-weight: 300;">
   {{ instructions }}

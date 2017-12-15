@@ -1,0 +1,9 @@
+---
+params:
+output:
+  pdf_document:
+    template: download.tex
+    keep_tex: true
+name: "`r params$name`"
+instruc: "`r params$instruc`"
+---

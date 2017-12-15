@@ -16,6 +16,9 @@ p {
   color: #5d5d5d;
   font-family: 'Josefin Sans', sans-serif;
 }
+a:hover, a:visited, a:link, a:active {
+  text-decoration: none;
+}
 #crearScreen {
   display: flex;
   flex-direction: column;
@@ -144,7 +147,7 @@ p {
 #region .control-label {
   font-weight: bold;
   font-size: 17px;
-  color:black;
+  color: black;
   font-family: 'Josefin Slab', sans-serif;
   border-bottom: 3px solid white !important;
 }
@@ -238,10 +241,12 @@ p {
   font-size: 7pt;
 }
 .image_small {
+  max-height: 20px;
   max-width: 20px;
 }
 .image_smaller {
   max-width: 15px;
+  max-height: 15px;
   margin-right: 2px;
 }
 .flex_center {
@@ -276,4 +281,7 @@ p {
   margin-left: 0px;
   padding-left: 6px;
   padding-bottom: 25px;
+}
+.shiny-download-link {
+  color: #5d5d5d;
 }

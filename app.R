@@ -4,68 +4,69 @@ library(shinyjs)
 library(dplyr)
 source("functions.R")
 
-ui <- bootstrapPage(theme = "theme.css",
+ui <- bootstrapPage(
+  theme = "theme.css",
   tags$head(tags$script(src="scripts.js")),
   useShinyjs(),
   div(id = "mobile",
-    div(id = "buttonScreen", 
-      style = "display: flex; width: 100%; text-align: center; justify-content: center;",
-      tags$button(
-        id = "buscar",
-        class = "btn btn-default action-button shiny-bound-input",
-        width = "100%",
-        img(src = "img/botones ceular-12.png")
+      div(id = "buttonScreen", 
+          style = "display: flex; width: 100%; text-align: center; justify-content: center;",
+          tags$button(
+            id = "buscar",
+            class = "btn btn-default action-button shiny-bound-input",
+            width = "100%",
+            img(src = "img/botones ceular-12.png")
+          ),
+          hr(),
+          tags$button(
+            id = "crear", 
+            style = "display: flex; width: 100%; text-align: center; justify-content: center;",
+            class = "btn btn-default action-button shiny-bound-input",
+            width = "100%",
+            img(src = "img/botones ceular-13.png")
+          )
       ),
-      hr(),
-      tags$button(
-        id = "crear", 
-        style = "display: flex; width: 100%; text-align: center; justify-content: center;",
-        class = "btn btn-default action-button shiny-bound-input",
-        width = "100%",
-        img(src = "img/botones ceular-13.png")
+      div(id = "crearScreen", class = "crearScreen",
+          div(style = "width: 100%;",
+              img(src = "img/botones ceular-13.png", style = "display: block; margin-left: auto; margin-right: auto;"),  
+              p(id = "ref", '"Tomado de: Gran Libro de la Cocina Colombiana"')
+          ),
+          div(id = "left",
+              uiOutput("select_ingUI"),
+              uiOutput("ing_count"),
+              uiOutput("selected_ing_list"),
+              br(),
+              br(),
+              uiOutput("priceUI"),
+              br(),
+              uiOutput("select_regionUI"),
+              br(),
+              actionButton("volver1", label = "Volver", width = "100%"),
+              br()
+          ),
+          div(id = "right",
+              div(id = "recetas_title",
+                  div(id = "recetas", "Recetas"),
+                  br(),
+                  tags$button(
+                    id = "orderTiempo",
+                    class = "btn btn-default action-button shiny-bound-input",
+                    img(src = "img/iconos especial cocina 50-04.png")
+                  ),
+                  br()
+              ),
+              uiOutput('results')
+          )
+      ),
+      div(id = "buscarScreen",
+          div(id = "search",
+              tags$img(src = "img/Iconos especial cocina-01.png"),
+              uiOutput("searchNameUI")
+          ),
+          br(),
+          uiOutput("show_receta"),
+          actionButton("volver2", label = "Volver", width = "100%")
       )
-    ),
-    div(id = "crearScreen", class = "crearScreen",
-      div(style = "width: 100%;",
-        img(src = "img/botones ceular-13.png", style = "display: block; margin-left: auto; margin-right: auto;"),  
-        p(id = "ref", '"Tomado de: Gran Libro de la Cocina Colombiana"')
-      ),
-      div(id = "left",
-        uiOutput("select_ingUI"),
-        uiOutput("ing_count"),
-        uiOutput("selected_ing_list"),
-        br(),
-        br(),
-        uiOutput("priceUI"),
-        br(),
-        uiOutput("select_regionUI"),
-        br(),
-        actionButton("volver1", label = "Volver", width = "100%"),
-        br()
-      ),
-      div(id = "right",
-        div(id = "recetas_title",
-            div(id = "recetas", "Recetas"),
-            br(),
-            tags$button(
-              id = "orderTiempo",
-              class = "btn btn-default action-button shiny-bound-input",
-              img(src = "img/iconos especial cocina 50-04.png")
-            ),
-            br()
-        ),
-        uiOutput('results')
-      )
-    ),
-    div(id = "buscarScreen",
-      div(id = "search",
-          tags$img(src = "img/Iconos especial cocina-01.png"),
-          uiOutput("searchNameUI")
-      ),
-      br(),
-      uiOutput("show_receta"),
-      actionButton("volver2", label = "Volver", width = "100%")
-    )
   )
 )
 
@@ -188,7 +189,7 @@ server <- function(input, output, session) {
                                   placeholder = "Escribe los ingredientes")
     )
   })
-    
+  
   
   output$selected_ing_list <- renderUI({
     choices <- NULL
@@ -241,12 +242,13 @@ server <- function(input, output, session) {
     textInput("searchName", placeholder = "BUSCA TU RECETA", 
               label = NULL, width = "100%")
   })
-    
+  
   showRecetaModal <- function(uidInput) {
     receta <- recetas %>%
       filter(uid == uidInput) %>%
       group_by(uid) %>%
       filter(row_number() == 1)
+    fillDownloadData(uidInput, "Modal")
     showModal(modalDialog(
       title = tags$span(receta$name, id = "modal_title"),
       htmlTemplate("templates/receta_detail.html",
@@ -259,7 +261,8 @@ server <- function(input, output, session) {
                    whatsapp = getWhatsAppLink(uidInput),
                    tiempo = ifelse(is.na(receta$tiempo_mins), "", paste(receta$tiempo_mins, " mins")),
                    hiddenTiempo = ifelse(is.na(receta$tiempo_mins), "hidden", ""),
-                   hiddenDificultad = ifelse(is.na(receta$dificultad), "hidden", "")
+                   hiddenDificultad = ifelse(is.na(receta$dificultad), "hidden", ""),
+                   download = uiOutput(paste0("downloadButtonModal", uidInput))
       ),
       footer = modalButton("Cerrar")
     ))
@@ -269,6 +272,7 @@ server <- function(input, output, session) {
     d <- dataBuscar()
     if (nrow(d) > 0 && rv$lastClick == "buscar") {
       purrr::map(1:nrow(d), function(i) {
+        
         html <- htmlTemplate("templates/receta_list.html",
                              id = d$uid[i],
                              name = d$name[i],
@@ -281,7 +285,40 @@ server <- function(input, output, session) {
       noResults()
     }
   })
-
+  
+  fillDownloadData <- function (id, namespace = "List") {
+    receta <- recetas %>%
+      filter(uid == id) %>%
+      filter(row_number() == 1)
+    
+    output[[paste0("downloadButton", namespace, id)]] <- renderUI({
+      downloadLink(paste0("downloadData", namespace, id), 
+                   div(style="display:flex; font-weight: 300; font-size: 8pt;",
+                    img(src="img/Iconos especial cocina-05.png", class="image_smaller", style="margin-top: 2px;font-weight: 300;"),
+                    p("Descargar", style="margin-top: 3px;")
+                   )
+      )
+    })
+    
+    output[[paste0("downloadData", namespace, id)]] <- downloadHandler(
+      paste0('receta_', id, '.pdf'),
+      content = function(file) {
+        params <- list(
+          name = receta$name,
+          instruc = receta$instruc
+        )
+        rmarkdown::render("download_template.Rmd",
+                          params = params,
+                          output_file = "built_report.pdf")
+        readBin(con = "built_report.pdf",
+                what = "raw",
+                n = file.info("built_report.pdf")[, "size"]) %>%
+          writeBin(con = file)
+        contentType = 'built_report.pdf'
+      }
+    )   
+  }
+  
   output$results <- renderUI({
     if (!is.null(dataCrear()) && nrow(dataCrear()) > 0 && rv$lastClick == "crear") {
       if (rv$lastClickTiempo == "desc") {
@@ -297,19 +334,21 @@ server <- function(input, output, session) {
           recetaId <- d$uid[i]
           receta <- recetas %>%
             filter(uid == recetaId)
+          fillDownloadData(recetaId)
           html <- htmlTemplate("templates/receta_list_detailed.html",
-            id = recetaId,
-            name = d$name[i],
-            dificultadImage = getDifcultadImage(d$dificultad[i]),
-            dificultadText = getDifcultadText(d$dificultad[i]),
-            tiempo = ifelse(is.na(d$tiempo_mins[i]), "", paste(d$tiempo_mins[i], " mins")),
-            ingredientes = createIngredientesText(receta$ing) ,
-            twitter = getTwitterLink(recetaId),
-            facebook = getFacebookLink(recetaId),
-            pinterest = getPinterestLink(recetaId),
-            whatsapp = getWhatsAppLink(recetaId),
-            hiddenTiempo = ifelse(is.na(d$tiempo_mins[i]), "hidden", ""),
-            hiddenDificultad = ifelse(is.na(d$dificultad[i]), "hidden", "")
+                               id = recetaId,
+                               name = d$name[i],
+                               dificultadImage = getDifcultadImage(d$dificultad[i]),
+                               dificultadText = getDifcultadText(d$dificultad[i]),
+                               tiempo = ifelse(is.na(d$tiempo_mins[i]), "", paste(d$tiempo_mins[i], " mins")),
+                               ingredientes = createIngredientesText(receta$ing) ,
+                               twitter = getTwitterLink(recetaId),
+                               facebook = getFacebookLink(recetaId),
+                               pinterest = getPinterestLink(recetaId),
+                               whatsapp = getWhatsAppLink(recetaId),
+                               hiddenTiempo = ifelse(is.na(d$tiempo_mins[i]), "hidden", ""),
+                               hiddenDificultad = ifelse(is.na(d$dificultad[i]), "hidden", ""),
+                               download = uiOutput(paste0("downloadButtonList", recetaId))
           )
           html
         })
