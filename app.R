@@ -3,6 +3,7 @@ library(readxl)
 library(shinyjs)
 library(dplyr)
 library(stringr)
+library(imteractive)
 source("functions.R")
 
 ui <- bootstrapPage(
@@ -20,7 +21,7 @@ ui <- bootstrapPage(
           ),
           hr(),
           tags$button(
-            id = "crear", 
+            id = "crear",
             style = "display: flex; width: 100%; text-align: center; justify-content: center;",
             class = "btn btn-default action-button shiny-bound-input",
             width = "100%",
@@ -42,8 +43,11 @@ ui <- bootstrapPage(
               br(),
               uiOutput("select_regionUI"),
               br(),
-              actionButton("volver1", label = "Volver", width = "100%"),
+              tags$button(id = "volver1", 
+                          class = "btn btn-default action-button shiny-bound-input",
+                          img(src="img/back.svg", style="width:30px; height:30px;")),
               br()
+              #, imteractiveOutput("viz")
           ),
           div(id = "right",
               div(id = "recetas_title",
@@ -66,7 +70,9 @@ ui <- bootstrapPage(
           ),
           br(),
           uiOutput("show_receta"),
-          actionButton("volver2", label = "Volver", width = "100%")
+          tags$button(id = "volver2", 
+                      class = "btn btn-default action-button shiny-bound-input",
+                      img(src="img/back.svg", style="width:30px; height:30px;"))
       )
   )
 )
@@ -119,6 +125,7 @@ server <- function(input, output, session) {
         filter(price <= input$price)
     }
     
+    #print(input$viz_clicked_id)
     if (!is.null(input$region) && input$region != "Todos") {
       d <- d %>%
         filter(region == input$region)
@@ -177,6 +184,18 @@ server <- function(input, output, session) {
     showRecetaModal(input$last_btn)
   })
   
+  output$viz <- renderImteractive({
+    img <- system.file("htmlwidgets/samples/colombia_map.svg", package = "imteractive")
+    d <- data_frame(
+      id = c("CO-SAP", "CO-LAG", "CO-CUN"),
+      number = c(10,20, 30),
+      text = c("C1","C2","C3"),
+      color = c("#AA4032","#46FF32","#3490AA")
+    )
+    imteractive(img, d = d, debug = FALSE, maxWidth = 400,
+                clickable = TRUE, pointer = FALSE, modal = FALSE)
+  })
+  
   output$select_ingUI <- renderUI({
     d <- recetas %>%
       filter(!is.na(ing))
@@ -190,7 +209,6 @@ server <- function(input, output, session) {
                                   placeholder = "Escribe los ingredientes")
     )
   })
-  
   
   output$selected_ing_list <- renderUI({
     choices <- NULL
@@ -301,15 +319,15 @@ server <- function(input, output, session) {
       filter(uid == id) %>%
       filter(row_number() == 1)
     
-    ings_lines <-str_split(receta$ings, "·") 
-    ings_lines_length <- length(ings_lines[[1]])
-    n_column1 <- ings_lines_length - round(ings_lines_length / 2)
-    column1 <- ings_lines[[1]][1:n_column1] %>%
-      str_trim() %>%
-      paste(collapse="\n\n ")
-    column2 <- ings_lines[[1]][(n_column1+1):ings_lines_length] %>%
-      str_trim() %>%
-      paste(collapse="\n\n ")
+    ings_lines <- str_split(receta$ings, "·")
+    if (!is.na(ings_lines)) {
+      ings_lines_length <- length(ings_lines[[1]])
+      n_column1 <- ings_lines_length - round(ings_lines_length / 2)
+      column1 <- ings_lines[[1]][1:n_column1] %>%
+        str_trim() 
+      column2 <- ings_lines[[1]][(n_column1+1):ings_lines_length] %>%
+        str_trim()
+    }
     
     output[[paste0("downloadData", namespace, id)]] <- downloadHandler(
       paste0('receta_', id, '.pdf'),

@@ -43,11 +43,6 @@ a:hover, a:visited, a:link, a:active {
     display: none;
   }
 }
-@media only screen and (max-width: 768px) {
-  #volver1, #volver2 {
-    display: none;
-  }
-}
 #buttonScreen {
   display: flex;
   position: absolute;
