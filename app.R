@@ -1,9 +1,10 @@
 library(shiny)
+#library(imteractive)
 library(readxl)
 library(shinyjs)
 library(dplyr)
 library(stringr)
-library(imteractive)
+
 source("functions.R")
 
 ui <- bootstrapPage(
@@ -45,9 +46,10 @@ ui <- bootstrapPage(
               br(),
               tags$button(id = "volver1", 
                           class = "btn btn-default action-button shiny-bound-input",
-                          img(src="img/back.svg", style="width:30px; height:30px;")),
-              br()
-              #, imteractiveOutput("viz")
+                          style = "border: none;border-radius: unset;background: transparent;",
+                          img(src="img/back.svg", style="width:30px; height:30px;"))
+              # br(),
+              #imteractiveOutput("viz")
           ),
           div(id = "right",
               div(id = "recetas_title",
@@ -72,6 +74,7 @@ ui <- bootstrapPage(
           uiOutput("show_receta"),
           tags$button(id = "volver2", 
                       class = "btn btn-default action-button shiny-bound-input",
+                      style = "border: none;border-radius: unset;background: transparent;",
                       img(src="img/back.svg", style="width:30px; height:30px;"))
       )
   )
@@ -184,17 +187,17 @@ server <- function(input, output, session) {
     showRecetaModal(input$last_btn)
   })
   
-  output$viz <- renderImteractive({
-    img <- system.file("htmlwidgets/samples/colombia_map.svg", package = "imteractive")
-    d <- data_frame(
-      id = c("CO-SAP", "CO-LAG", "CO-CUN"),
-      number = c(10,20, 30),
-      text = c("C1","C2","C3"),
-      color = c("#AA4032","#46FF32","#3490AA")
-    )
-    imteractive(img, d = d, debug = FALSE, maxWidth = 400,
-                clickable = TRUE, pointer = FALSE, modal = FALSE)
-  })
+  # output$viz <- renderImteractive({
+  #   img <- system.file("htmlwidgets/samples/colombia_map.svg", package = "imteractive")
+  #   d <- data_frame(
+  #     id = c("CO-SAP", "CO-LAG", "CO-CUN"),
+  #     number = c(10,20, 30),
+  #     text = c("C1","C2","C3"),
+  #     color = c("#AA4032","#46FF32","#3490AA")
+  #   )
+  #   imteractive(img, d = d, debug = FALSE, maxWidth = 100,
+  #               clickable = TRUE, pointer = FALSE, modal = FALSE)
+  # })
   
   output$select_ingUI <- renderUI({
     d <- recetas %>%

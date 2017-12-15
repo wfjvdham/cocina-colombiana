@@ -25,6 +25,13 @@ a:hover, a:visited, a:link, a:active {
   padding-left: 15px;
   padding-right: 15px;
 }
+#ref {
+  font-size: 23px;
+  font-family: 'Josefin Slab', sans-serif;
+  color: black;
+  text-align: center;
+  padding-bottom: 60px;
+}
 @media only screen and (min-width: 768px) {
   #crearScreen {
     flex-direction: row;
@@ -41,6 +48,9 @@ a:hover, a:visited, a:link, a:active {
   }
   .not_show {
     display: none;
+  }
+  #ref {
+    padding-bottom: 20px;
   }
 }
 #buttonScreen {
@@ -181,13 +191,6 @@ a:hover, a:visited, a:link, a:active {
 }
 .form-control.selectize-control .selectize-input .item {
   display: none;
-}
-#ref {
-  font-size: 23px;
-  font-family: 'Josefin Slab', sans-serif;
-  color: black;
-  text-align: center;
-  padding-bottom: 60px;
 }
 .modal-header {
   padding-bottom: unset;
