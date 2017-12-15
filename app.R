@@ -324,9 +324,13 @@ server <- function(input, output, session) {
       ings_lines_length <- length(ings_lines[[1]])
       n_column1 <- ings_lines_length - round(ings_lines_length / 2)
       column1 <- ings_lines[[1]][1:n_column1] %>%
-        str_trim() 
+        str_trim() %>%
+        paste(collapse = "\n- ") %>%
+        paste('-', .)
       column2 <- ings_lines[[1]][(n_column1+1):ings_lines_length] %>%
-        str_trim()
+        str_trim() %>%
+        paste(collapse = "\n- ") %>%
+        paste('-', .)
     }
     
     output[[paste0("downloadData", namespace, id)]] <- downloadHandler(
@@ -334,10 +338,11 @@ server <- function(input, output, session) {
       content = function(file) {
         params <- list(
           name = receta$name,
-          instruc = receta$instruc,
-          column1 = column1,
-          column2 = column2
+          instruc = receta$instruc
         )
+        fileConn <- file("download_template.Rmd")
+        writeLines(c("---\nparams:\noutput:\n  pdf_document:\n    template: download.tex\n    keep_tex: true\nname: \"`r params$name`\"\ninstruc: \"`r params$instruc`\"\ncolumn1:", column1,"column2:", column2, "---"), fileConn)
+        close(fileConn)
         rmarkdown::render("download_template.Rmd",
                           params = params,
                           output_file = "built_report.pdf")
