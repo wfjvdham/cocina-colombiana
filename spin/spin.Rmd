@@ -1,6 +1,8 @@
 ---
 title: "Cosina Colombiana"
-output: html_document
+output: 
+  html_document:
+    self_contained: true
 ---
 
 ```{r setup, include=FALSE}
@@ -15,24 +17,14 @@ knitr::opts_chunk$set(echo = FALSE)
 ```
 
 ```{r read_data}
-recetas <- read_excel('./recetas.xlsx')
-recetas_ing <- read_excel('./recetas-ing.xlsx')
+recetas_ing <- readRDS("../data/recetas.Rda")
+recetas <- recetas_ing %>%
+  group_by(uid) %>%
+  filter(row_number() == 1) %>%
+  ungroup()
 ```
 
 ```{r clean_data}
-recetas_ing <- recetas_ing %>%
-  mutate(ing =  case_when(
-                  ing == "huevos" ~ "huevo",
-                  ing == "arvejas verdes" ~ "arveja verde",
-                  ing == "batatas" ~ "batata",
-                  ing == "berenjenas" ~ "berenjena",
-                  ing == "calados" ~ "calado",
-                  ing == "huesos" ~ "hueso",
-                  ing == "mazorcas" ~ "mazorca",
-                  TRUE ~ ing
-                )
-  )
-
 n_recetas <- recetas %>%
   nrow()
 
@@ -45,7 +37,7 @@ n_ing <- recetas_ing %>%
 ```{r ingredientes}
 recetas_ing %>%
   count(ing) %>%
-  knitr::kable(format = "html", caption = "Ingredientos por Region") %>%
+  knitr::kable(format = "html", caption = "Ingredientos") %>%
   kable_styling() %>%
   scroll_box(height = "400px")
 ```
@@ -54,6 +46,7 @@ recetas_ing %>%
 
 ```{r 5_mas_comun}
 recetas_ing_5_mas_comun <- recetas_ing %>%
+  na.omit() %>%
   count(ing) %>%
   arrange(desc(n)) %>%
   head(5)
@@ -95,9 +88,7 @@ n_ing / n_recetas
 ## Ingredientes por Receta
 
 ```{r ing_por_receta}
-recetas %>%
-  inner_join(recetas_ing, by = "uid") %>%
-  select(name = name.x, ing) %>%
+recetas_ing %>%
   count(name) %>%
   arrange(desc(n)) %>%
   knitr::kable(format = "html", caption = "Ingredientos por Receta") %>%
@@ -105,29 +96,26 @@ recetas %>%
   scroll_box(height = "400px")
 ```
 
-## Combinaciones de ingredientes el mas comun
-
 ```{r recetas_por_combinacion, cache=TRUE}
-combinations_count <- recetas_ing %>% 
-  group_by(uid) %>% 
-  do(as_data_frame(t(combn(.[["ing"]], 2)))) %>%
-  group_by(V1, V2) %>% 
-  summarise(n = n()) %>%
-  ungroup() %>%
-  filter(n > 40) %>%
-  mutate(combination = paste(V1, V2, sep = "&")) %>%
-  select(combination, n)
-
-hgch_bar_ver_top_CatNum(combinations_count, 
-                        title = "Numero de recetas por combinacion", 
-                        xAxisTitle = "combinacion")
+# combinations_count <- recetas_ing %>% 
+#   group_by(uid) %>% 
+#   do(as_data_frame(t(combn(.[["ing"]], 2)))) %>%
+#   group_by(V1, V2) %>% 
+#   summarise(n = n()) %>%
+#   ungroup() %>%
+#   filter(n > 40) %>%
+#   mutate(combination = paste(V1, V2, sep = "&")) %>%
+#   select(combination, n)
+# 
+# hgch_bar_ver_top_CatNum(combinations_count, 
+#                         title = "Numero de recetas por combinacion", 
+#                         xAxisTitle = "combinacion")
 ```
 
 ## Ingredientos por Region
 
 ```{r ing_por_region, cache = TRUE}
-recetas %>%
-  inner_join(recetas_ing, by = "uid") %>%
+recetas_ing %>%
   select(region, ing) %>%
   na.omit() %>%
   count(region, ing) %>%
@@ -142,15 +130,14 @@ recetas %>%
 ## 5 ingredientes mas comun por Region
 
 ```{r 5_mas_comun_por_region, cache = TRUE}
-recetas %>%
-  inner_join(recetas_ing, by = "uid") %>%
+recetas_ing %>%
   select(region, ing) %>%
   na.omit() %>%
   count(region, ing) %>%
   group_by(region) %>%
   mutate(perc = n / sum(n) * 100) %>%
   arrange(region, desc(perc)) %>%
-  top_n(5) %>%
+  top_n(5, wt = perc) %>%
   knitr::kable(format = "html", caption = "Ingredientos por Region") %>%
   kable_styling() %>%
   scroll_box(height = "400px")
@@ -165,23 +152,22 @@ hgch_bar_ver_top_Cat(recetas$region, title = "Numero de Recetas por region")
 # Tiempo
 
 ```{r distribucion_tiempo, cache=TRUE}
-recetas_tiempo_hora %>%
-  select(tiempo_minutos) %>%
+recetas %>%
+  select(tiempo_mins) %>%
   ggplot() +
-  geom_histogram(aes(tiempo_hora)) +
-  xlim(-1, 10)
+  geom_histogram(aes(tiempo_mins))
 
-summary(recetas_tiempo_hora$tiempo_hora)
+summary(recetas$tiempo_mins)
 ```
 
 ## Tiempo por region
 
 ```{r tiempo_por_region}
-recetas_tiempo_hora %>%
-  select(region, tiempo_hora) %>%
+recetas %>%
+  select(region, tiempo_mins) %>%
   hgch_bar_ver_top_CatNum(aggregation = "median",
                       title = "median tiempo por region",
-                      yAxisTitle = "tiempo en horas")
+                      yAxisTitle = "tiempo en minutos")
 ```
 
 # Dificultad
@@ -207,9 +193,9 @@ recetas %>%
 ## Promedio tiempo por dificultad
 
 ```{r tiempo_por_dificultad}
-recetas_tiempo_hora %>%
-  select(dificultad, tiempo_hora) %>%
+recetas %>%
+  select(dificultad, tiempo_mins) %>%
   hgch_bar_ver_CatNum(aggregation = "mean",
                       title = "Recetas dificil toma más tiempo",
-                      yAxisTitle = "tiempo en horas")
+                      yAxisTitle = "tiempo en minutas")
 ```
