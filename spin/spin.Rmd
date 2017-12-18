@@ -28,8 +28,7 @@ recetas <- recetas_ing %>%
 n_recetas <- recetas %>%
   nrow()
 
-n_ing <- recetas_ing %>%
-  nrow()
+n_ing <- length(unique(recetas_ing$ing))
 ```
 
 # Ingredientes
