@@ -259,10 +259,7 @@ server <- function(input, output, session) {
       group_by(uid) %>%
       filter(row_number() == 1)
     ingsListNew <- ""
-    print("receta$ings")
-    print(receta$ings)
     if (!is.na(receta$ings)) {
-      print("try t make ings")
       ingsList <- str_split(receta$ings, "·")
       ingsList <- str_trim(ingsList[[1]])
       ingsListNew <- purrr::map(ingsList, function(ingLine) {
