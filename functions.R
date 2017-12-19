@@ -42,13 +42,13 @@ createIngredientesText <- function(ingredientes) {
 }
 
 getTwitterLink <- function (id) {
-  paste0("http://twitter.com/share?url=http://127.0.0.1/?id=", id)
+  paste0("http://twitter.com/share?url=https://randommonkey.shinyapps.io/cocina-colombia/?id=", id)
   #text=
   #hastags=
 }
 
 getFacebookLink <- function (id) {
-  paste0("http://www.facebook.com/sharer.php?u=http://127.0.0.1/?id=", id)
+  paste0("http://www.facebook.com/sharer.php?u=https://randommonkey.shinyapps.io/cocina-colombia/?id=", id)
   #
 }
 
@@ -57,7 +57,7 @@ getPinterestLink <- function (id) {
 }
 
 getWhatsAppLink <- function (id) {
-  paste0("https://api.whatsapp.com/send?text=http://127.0.0.1/?id=", id)
+  paste0("https://api.whatsapp.com/send?text=https://randommonkey.shinyapps.io/cocina-colombia/?id=", id)
 }
 
 search_table <- function(query, table, props){
