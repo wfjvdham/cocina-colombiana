@@ -1,0 +1,46 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{multicol}
+\usepackage{geometry}
+\usepackage{xcolor}
+\usepackage{pgffor}
+
+% pandoc syntax highlighting
+$if(highlighting-macros)$
+  $highlighting-macros$
+  $endif$
+
+\fontfamily{sans-serif}
+\selectfont
+
+\geometry{letterpaper, top=60pt, left=80pt, right=120pt}
+\setlength{\columnsep}{2cm}
+\definecolor{light}{rgb}{0.56078431373, 0.52941176471 ,0.52941176471}
+
+\begin{document}
+
+$if(name)$
+  {\noindent \huge $name$}
+  \vspace{1cm}
+$endif$
+
+$if(column1)$
+  \begin{multicols}{2}
+  \noindent \color{light}
+  $for(column1)$
+    $column1$\newline
+  $endfor$
+  $for(column2)$
+    $column2$\newline
+  $endfor$
+  \end{multicols}
+  \vspace{1cm}
+$endif$
+
+$if(instruc)$
+  {\noindent \LARGE Instruciones}\\
+  \\
+  \noindent \color{light} $instruc$
+$endif$
+
+\end{document}

@@ -1,0 +1,25 @@
+<button id={{ id }} class="needed white" data-toggle="modal" data-target="#receta_detail">
+  <span class="font_15p font_italic">{{ name }}</span>
+  <img src="{{ dificultadImage }}" class="image_small" {{ hiddenDificultad }}/>
+  <span class="font_7">{{ dificultadText }}</span>
+  <img src="img/Iconos especial cocina-04.png" class="image_small" {{ hiddenTiempo }}/>
+  <span class="font_7">{{ tiempo }}</span>
+  <hr class="line"/>
+  <p span class="font_10_sans">{{ ingredientes }}</p>
+</button>
+<div class="padding_bottom" style="display: flex;">
+  <a href="{{ twitter }}">
+    <img src="img/Iconos especial cocina-12.png" class="image_smaller"/>
+  </a>
+  <a href="{{ facebook }}">
+    <img src="img/Iconos especial cocina-09.png" class="image_smaller"/>
+  </a>
+  <a href="{{ pinterest }}">
+    <img src="img/Iconos especial cocina-11.png" class="image_smaller"/>
+  </a>
+  <a href="{{ whatsapp }}" class="not_show">
+    <img src="img/Iconos especial cocina-10.png" class="image_smaller"/>
+  </a>
+  {{ download }}
+  <br />
+</div>
