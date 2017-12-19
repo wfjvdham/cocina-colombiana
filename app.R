@@ -258,6 +258,17 @@ server <- function(input, output, session) {
       filter(uid == uidInput) %>%
       group_by(uid) %>%
       filter(row_number() == 1)
+    ingsListNew <- ""
+    print("receta$ings")
+    print(receta$ings)
+    if (!is.na(receta$ings)) {
+      print("try t make ings")
+      ingsList <- str_split(receta$ings, "·")
+      ingsList <- str_trim(ingsList[[1]])
+      ingsListNew <- purrr::map(ingsList, function(ingLine) {
+        p(style = "font-size: 10pt; font-weight: 300;", ingLine)
+      })
+    }
     fillDownloadData(uidInput, "Modal")
     showModal(modalDialog(
       title = tags$span(receta$name, id = "modal_title"),
@@ -272,7 +283,8 @@ server <- function(input, output, session) {
                    tiempo = ifelse(is.na(receta$tiempo_mins), "", paste(receta$tiempo_mins, " mins")),
                    hiddenTiempo = ifelse(is.na(receta$tiempo_mins), "hidden", ""),
                    hiddenDificultad = ifelse(is.na(receta$dificultad), "hidden", ""),
-                   download = uiOutput(paste0("downloadButtonModal", uidInput))
+                   download = uiOutput(paste0("downloadButtonModal", uidInput)),
+                   ings = ingsListNew
       ),
       footer = modalButton("Cerrar")
     ))
