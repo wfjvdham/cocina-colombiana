@@ -39,7 +39,7 @@ ui <- bootstrapPage(
               uiOutput("selected_ing_list"),
               br(),
               br(),
-              uiOutput("priceUI"),
+              uiOutput("priceUI", style = "display: none;"),
               br(),
               uiOutput("select_regionUI"),
               br(),
@@ -240,7 +240,7 @@ server <- function(input, output, session) {
     div(id = "price",
         sliderInput("price",  min = 0, max = 100,
                     htmlTemplate("templates/price_label.html"),  
-                    value = 60, width = "100%", pre = "$ ", post = " mil")
+                    value = 100, width = "100%", pre = "$ ", post = " mil")
     )
   })
   
