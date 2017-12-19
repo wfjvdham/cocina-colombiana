@@ -1,5 +1,4 @@
 library(shiny)
-#library(imteractive)
 library(readxl)
 library(shinyjs)
 library(dplyr)
@@ -30,7 +29,7 @@ ui <- bootstrapPage(
           )
       ),
       div(id = "crearScreen", class = "crearScreen",
-          div(style = "width: 100%;",
+          div(id="heading", style = "width: 100%; display: none;",
               img(src = "img/botones ceular-13.png", style = "display: block; margin-left: auto; margin-right: auto;"),  
               p(id = "ref", '"Tomado de: Gran Libro de la Cocina Colombiana"')
           ),
@@ -40,7 +39,7 @@ ui <- bootstrapPage(
               uiOutput("selected_ing_list"),
               br(),
               br(),
-              uiOutput("priceUI"),
+              uiOutput("priceUI", style = "display: none;"),
               br(),
               uiOutput("select_regionUI"),
               br(),
@@ -48,10 +47,8 @@ ui <- bootstrapPage(
                           class = "btn btn-default action-button shiny-bound-input",
                           style = "border: none;border-radius: unset;background: transparent;",
                           img(src="img/back.svg", style="width:30px; height:30px;"))
-              # br(),
-              #imteractiveOutput("viz")
           ),
-          div(id = "right",
+          div(id = "right", style = "display: none;",
               div(id = "recetas_title",
                   div(id = "recetas", "Recetas"),
                   br(),
@@ -65,7 +62,7 @@ ui <- bootstrapPage(
               uiOutput('results')
           )
       ),
-      div(id = "buscarScreen",
+      div(id = "buscarScreen", style = "display: none;",
           div(id = "search",
               tags$img(src = "img/Iconos especial cocina-01.png"),
               uiOutput("searchNameUI")
@@ -128,7 +125,6 @@ server <- function(input, output, session) {
         filter(price <= input$price)
     }
     
-    #print(input$viz_clicked_id)
     if (!is.null(input$region) && input$region != "Todos") {
       d <- d %>%
         filter(region == input$region)
@@ -164,12 +160,16 @@ server <- function(input, output, session) {
     hide("buttonScreen")
     hide("crearScreen")
     hide("buscarScreen")
+    hide("heading")
+    hide("right")
     if (rv$lastClick == "buscar") {
       showElement("buscarScreen")
     } else if (rv$lastClick == "volver") {
       showElement("buttonScreen")
     } else {
       showElement("crearScreen")
+      showElement("heading")
+      showElement("right")
     }
   })
   
@@ -186,18 +186,6 @@ server <- function(input, output, session) {
   observeEvent(input$last_btn, {
     showRecetaModal(input$last_btn)
   })
-  
-  # output$viz <- renderImteractive({
-  #   img <- system.file("htmlwidgets/samples/colombia_map.svg", package = "imteractive")
-  #   d <- data_frame(
-  #     id = c("CO-SAP", "CO-LAG", "CO-CUN"),
-  #     number = c(10,20, 30),
-  #     text = c("C1","C2","C3"),
-  #     color = c("#AA4032","#46FF32","#3490AA")
-  #   )
-  #   imteractive(img, d = d, debug = FALSE, maxWidth = 100,
-  #               clickable = TRUE, pointer = FALSE, modal = FALSE)
-  # })
   
   output$select_ingUI <- renderUI({
     d <- recetas %>%
@@ -256,7 +244,7 @@ server <- function(input, output, session) {
     div(id = "price",
         sliderInput("price",  min = 0, max = 100,
                     htmlTemplate("templates/price_label.html"),  
-                    value = 60, width = "100%", pre = "$ ", post = " mil")
+                    value = 100, width = "100%", pre = "$ ", post = " mil")
     )
   })
   
@@ -290,23 +278,26 @@ server <- function(input, output, session) {
     ))
   }
   
-  output$show_receta <- renderUI({
-    d <- dataBuscar()
-    if (nrow(d) > 0 && rv$lastClick == "buscar") {
-      purrr::map(1:nrow(d), function(i) {
-        
-        html <- htmlTemplate("templates/receta_list.html",
-                             id = d$uid[i],
-                             name = d$name[i],
-                             tiempo = ifelse(is.na(d$tiempo_mins[i]), "", paste(d$tiempo_mins[i], " mins")),
-                             hiddenTiempo = ifelse(is.na(d$tiempo_mins[i]), "hidden", "")
-        )
-        html
-      })
-    } else {
-      noResults()
-    }
+  observeEvent(dataBuscar(), {
+    output$show_receta <- renderUI({
+      d <- dataBuscar()
+      if (nrow(d) > 0 && rv$lastClick == "buscar") {
+        purrr::map(1:nrow(d), function(i) {
+          
+          html <- htmlTemplate("templates/receta_list.html",
+                               id = d$uid[i],
+                               name = d$name[i],
+                               tiempo = ifelse(is.na(d$tiempo_mins[i]), "", paste(d$tiempo_mins[i], " mins")),
+                               hiddenTiempo = ifelse(is.na(d$tiempo_mins[i]), "hidden", "")
+          )
+          html
+        })
+      } else {
+        noResults()
+      }
+    })
   })
+  
   
   fillDownloadData <- function (id, namespace = "List") {
     output[[paste0("downloadButton", namespace, id)]] <- renderUI({

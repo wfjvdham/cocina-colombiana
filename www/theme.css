@@ -213,7 +213,7 @@ a:hover, a:visited, a:link, a:active {
 }
 #results {
   overflow: scroll;
-  height: 490px;
+  height: 400px;
 }
 .margin_color {
   width: 100%;
