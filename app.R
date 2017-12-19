@@ -314,6 +314,8 @@ server <- function(input, output, session) {
       filter(row_number() == 1)
     
     ings_lines <- str_split(receta$ings, "·")
+    column1 <- "- "
+    column2 <- "- "
     if (!is.na(ings_lines)) {
       ings_lines_length <- length(ings_lines[[1]])
       n_column1 <- ings_lines_length - round(ings_lines_length / 2)
@@ -334,17 +336,17 @@ server <- function(input, output, session) {
           name = receta$name,
           instruc = receta$instruc
         )
-        fileConn <- file("download_template.Rmd")
+        fileConn <- file(paste0("download_template", ".Rmd"))
         writeLines(c("---\nparams:\noutput:\n  pdf_document:\n    template: download.tex\n    keep_tex: true\nname: \"`r params$name`\"\ninstruc: \"`r params$instruc`\"\ncolumn1:", column1,"column2:", column2, "---"), fileConn)
         close(fileConn)
-        rmarkdown::render("download_template.Rmd",
+        rmarkdown::render(paste0("download_template", ".Rmd"),
                           params = params,
-                          output_file = "built_report.pdf")
-        readBin(con = "built_report.pdf",
+                          output_file = paste0("built_report", ".pdf"))
+        readBin(con = paste0("built_report", ".pdf"),
                 what = "raw",
-                n = file.info("built_report.pdf")[, "size"]) %>%
+                n = file.info(paste0("built_report", ".pdf"))[, "size"]) %>%
           writeBin(con = file)
-        contentType = 'built_report.pdf'
+        contentType = paste0("built_report", ".pdf")
       }
     )   
   }
