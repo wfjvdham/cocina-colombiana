@@ -29,7 +29,7 @@ ui <- bootstrapPage(
             img(src = "img/botones ceular-13.png")
           )
       ),
-      div(id = "crearScreen", class = "crearScreen",
+      div(id = "crearScreen", class = "crearScreen", style = "display: none;",
           div(style = "width: 100%;",
               img(src = "img/botones ceular-13.png", style = "display: block; margin-left: auto; margin-right: auto;"),  
               p(id = "ref", '"Tomado de: Gran Libro de la Cocina Colombiana"')
@@ -65,7 +65,7 @@ ui <- bootstrapPage(
               uiOutput('results')
           )
       ),
-      div(id = "buscarScreen",
+      div(id = "buscarScreen", style = "display: none;",
           div(id = "search",
               tags$img(src = "img/Iconos especial cocina-01.png"),
               uiOutput("searchNameUI")
