@@ -45,7 +45,7 @@ ui <- bootstrapPage(
               br(),
               tags$button(id = "volver1", 
                           class = "btn btn-default action-button shiny-bound-input",
-                          style = "border: none;border-radius: unset;background: transparent;",
+                          style = "border: none;border-radius: unset;background: transparent;display: none;",
                           img(src="img/back.svg", style="width:30px; height:30px;"))
           ),
           div(id = "right", style = "display: none;",
@@ -162,6 +162,7 @@ server <- function(input, output, session) {
     hide("buscarScreen")
     hide("heading")
     hide("right")
+    hide("volver1")
     if (rv$lastClick == "buscar") {
       showElement("buscarScreen")
     } else if (rv$lastClick == "volver") {
@@ -170,6 +171,7 @@ server <- function(input, output, session) {
       showElement("crearScreen")
       showElement("heading")
       showElement("right")
+      showElement("volver1")
     }
   })
   
