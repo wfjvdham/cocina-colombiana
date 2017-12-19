@@ -28,8 +28,8 @@ ui <- bootstrapPage(
             img(src = "img/botones ceular-13.png")
           )
       ),
-      div(id = "crearScreen", class = "crearScreen", style = "display: none;",
-          div(style = "width: 100%;",
+      div(id = "crearScreen", class = "crearScreen",
+          div(id="heading", style = "width: 100%; display: none;",
               img(src = "img/botones ceular-13.png", style = "display: block; margin-left: auto; margin-right: auto;"),  
               p(id = "ref", '"Tomado de: Gran Libro de la Cocina Colombiana"')
           ),
@@ -48,7 +48,7 @@ ui <- bootstrapPage(
                           style = "border: none;border-radius: unset;background: transparent;",
                           img(src="img/back.svg", style="width:30px; height:30px;"))
           ),
-          div(id = "right",
+          div(id = "right", style = "display: none;",
               div(id = "recetas_title",
                   div(id = "recetas", "Recetas"),
                   br(),
@@ -160,12 +160,16 @@ server <- function(input, output, session) {
     hide("buttonScreen")
     hide("crearScreen")
     hide("buscarScreen")
+    hide("heading")
+    hide("right")
     if (rv$lastClick == "buscar") {
       showElement("buscarScreen")
     } else if (rv$lastClick == "volver") {
       showElement("buttonScreen")
     } else {
       showElement("crearScreen")
+      showElement("heading")
+      showElement("right")
     }
   })
   
