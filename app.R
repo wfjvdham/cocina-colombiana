@@ -1,5 +1,4 @@
 library(shiny)
-#library(imteractive)
 library(readxl)
 library(shinyjs)
 library(dplyr)
@@ -48,8 +47,6 @@ ui <- bootstrapPage(
                           class = "btn btn-default action-button shiny-bound-input",
                           style = "border: none;border-radius: unset;background: transparent;",
                           img(src="img/back.svg", style="width:30px; height:30px;"))
-              # br(),
-              #imteractiveOutput("viz")
           ),
           div(id = "right",
               div(id = "recetas_title",
@@ -128,7 +125,6 @@ server <- function(input, output, session) {
         filter(price <= input$price)
     }
     
-    #print(input$viz_clicked_id)
     if (!is.null(input$region) && input$region != "Todos") {
       d <- d %>%
         filter(region == input$region)
@@ -186,18 +182,6 @@ server <- function(input, output, session) {
   observeEvent(input$last_btn, {
     showRecetaModal(input$last_btn)
   })
-  
-  # output$viz <- renderImteractive({
-  #   img <- system.file("htmlwidgets/samples/colombia_map.svg", package = "imteractive")
-  #   d <- data_frame(
-  #     id = c("CO-SAP", "CO-LAG", "CO-CUN"),
-  #     number = c(10,20, 30),
-  #     text = c("C1","C2","C3"),
-  #     color = c("#AA4032","#46FF32","#3490AA")
-  #   )
-  #   imteractive(img, d = d, debug = FALSE, maxWidth = 100,
-  #               clickable = TRUE, pointer = FALSE, modal = FALSE)
-  # })
   
   output$select_ingUI <- renderUI({
     d <- recetas %>%
@@ -290,23 +274,26 @@ server <- function(input, output, session) {
     ))
   }
   
-  output$show_receta <- renderUI({
-    d <- dataBuscar()
-    if (nrow(d) > 0 && rv$lastClick == "buscar") {
-      purrr::map(1:nrow(d), function(i) {
-        
-        html <- htmlTemplate("templates/receta_list.html",
-                             id = d$uid[i],
-                             name = d$name[i],
-                             tiempo = ifelse(is.na(d$tiempo_mins[i]), "", paste(d$tiempo_mins[i], " mins")),
-                             hiddenTiempo = ifelse(is.na(d$tiempo_mins[i]), "hidden", "")
-        )
-        html
-      })
-    } else {
-      noResults()
-    }
+  observeEvent(dataBuscar(), {
+    output$show_receta <- renderUI({
+      d <- dataBuscar()
+      if (nrow(d) > 0 && rv$lastClick == "buscar") {
+        purrr::map(1:nrow(d), function(i) {
+          
+          html <- htmlTemplate("templates/receta_list.html",
+                               id = d$uid[i],
+                               name = d$name[i],
+                               tiempo = ifelse(is.na(d$tiempo_mins[i]), "", paste(d$tiempo_mins[i], " mins")),
+                               hiddenTiempo = ifelse(is.na(d$tiempo_mins[i]), "hidden", "")
+          )
+          html
+        })
+      } else {
+        noResults()
+      }
+    })
   })
+  
   
   fillDownloadData <- function (id, namespace = "List") {
     output[[paste0("downloadButton", namespace, id)]] <- renderUI({
