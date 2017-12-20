@@ -262,11 +262,13 @@ server <- function(input, output, session) {
       filter(row_number() == 1)
     ingsListNew <- ""
     if (!is.na(receta$ings)) {
-      ingsList <- str_split(receta$ings, "·")
-      ingsList <- str_trim(ingsList[[1]])
-      ingsListNew <- purrr::map(ingsList, function(ingLine) {
-        p(style = "font-size: 10pt; font-weight: 300;", ingLine)
-      })
+      ingsList <- receta$ings %>%
+        str_split("·")
+      ingsListNew <- ingsList[[1]] %>%
+        str_trim() %>%
+        purrr::map(function(ingLine) {
+          div(style = "font-size: 10pt; font-weight: 300;", ingLine)
+        })
     }
     fillDownloadData(uidInput, "Modal")
     showModal(modalDialog(
