@@ -48,7 +48,7 @@ ui <- bootstrapPage(
               br(),
               tags$button(id = "volver1", 
                           class = "btn btn-default action-button shiny-bound-input",
-                          style = "border: none;border-radius: unset;background: transparent;",
+                          style = "border: none;border-radius: unset;background: transparent;display: none;",
                           img(src="img/back.svg", style="width:30px; height:30px;"))
           ),
           div(id = "right", style = "display: none;",
@@ -165,6 +165,7 @@ server <- function(input, output, session) {
     hide("buscarScreen")
     hide("heading")
     hide("right")
+    hide("volver1")
     if (rv$lastClick == "buscar") {
       showElement("buscarScreen")
     } else if (rv$lastClick == "volver") {
@@ -173,6 +174,7 @@ server <- function(input, output, session) {
       showElement("crearScreen")
       showElement("heading")
       showElement("right")
+      showElement("volver1")
     }
   })
   
@@ -261,6 +263,16 @@ server <- function(input, output, session) {
       filter(uid == uidInput) %>%
       group_by(uid) %>%
       filter(row_number() == 1)
+    ingsListNew <- ""
+    if (!is.na(receta$ings)) {
+      ingsList <- receta$ings %>%
+        str_split("·")
+      ingsListNew <- ingsList[[1]] %>%
+        str_trim() %>%
+        purrr::map(function(ingLine) {
+          div(style = "font-size: 10pt; font-weight: 300;", ingLine)
+        })
+    }
     fillDownloadData(uidInput, "Modal")
     showModal(modalDialog(
       title = tags$span(receta$name, id = "modal_title"),
@@ -275,7 +287,8 @@ server <- function(input, output, session) {
                    tiempo = ifelse(is.na(receta$tiempo_mins), "", paste(receta$tiempo_mins, " mins")),
                    hiddenTiempo = ifelse(is.na(receta$tiempo_mins), "hidden", ""),
                    hiddenDificultad = ifelse(is.na(receta$dificultad), "hidden", ""),
-                   download = uiOutput(paste0("downloadButtonModal", uidInput))
+                   download = uiOutput(paste0("downloadButtonModal", uidInput)),
+                   ings = ingsListNew
       ),
       footer = modalButton("Cerrar")
     ))
@@ -317,6 +330,8 @@ server <- function(input, output, session) {
       filter(row_number() == 1)
     
     ings_lines <- str_split(receta$ings, "·")
+    column1 <- "- "
+    column2 <- "- "
     if (!is.na(ings_lines)) {
       ings_lines_length <- length(ings_lines[[1]])
       n_column1 <- ings_lines_length - round(ings_lines_length / 2)
@@ -337,17 +352,17 @@ server <- function(input, output, session) {
           name = receta$name,
           instruc = receta$instruc
         )
-        fileConn <- file("download_template.Rmd")
+        fileConn <- file(paste0("download_template", ".Rmd"))
         writeLines(c("---\nparams:\noutput:\n  pdf_document:\n    template: download.tex\n    keep_tex: true\nname: \"`r params$name`\"\ninstruc: \"`r params$instruc`\"\ncolumn1:", column1,"column2:", column2, "---"), fileConn)
         close(fileConn)
-        rmarkdown::render("download_template.Rmd",
+        rmarkdown::render(paste0("download_template", ".Rmd"),
                           params = params,
-                          output_file = "built_report.pdf")
-        readBin(con = "built_report.pdf",
+                          output_file = paste0("built_report", ".pdf"))
+        readBin(con = paste0("built_report", ".pdf"),
                 what = "raw",
-                n = file.info("built_report.pdf")[, "size"]) %>%
+                n = file.info(paste0("built_report", ".pdf"))[, "size"]) %>%
           writeBin(con = file)
-        contentType = 'built_report.pdf'
+        contentType = paste0("built_report", ".pdf")
       }
     )   
   }
