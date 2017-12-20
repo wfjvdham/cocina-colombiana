@@ -45,7 +45,7 @@ ui <- bootstrapPage(
               br(),
               tags$button(id = "volver1", 
                           class = "btn btn-default action-button shiny-bound-input",
-                          style = "border: none;border-radius: unset;background: transparent;",
+                          style = "border: none;border-radius: unset;background: transparent;display: none;",
                           img(src="img/back.svg", style="width:30px; height:30px;"))
           ),
           div(id = "right", style = "display: none;",
@@ -162,6 +162,7 @@ server <- function(input, output, session) {
     hide("buscarScreen")
     hide("heading")
     hide("right")
+    hide("volver1")
     if (rv$lastClick == "buscar") {
       showElement("buscarScreen")
     } else if (rv$lastClick == "volver") {
@@ -170,6 +171,7 @@ server <- function(input, output, session) {
       showElement("crearScreen")
       showElement("heading")
       showElement("right")
+      showElement("volver1")
     }
   })
   
@@ -258,6 +260,16 @@ server <- function(input, output, session) {
       filter(uid == uidInput) %>%
       group_by(uid) %>%
       filter(row_number() == 1)
+    ingsListNew <- ""
+    if (!is.na(receta$ings)) {
+      ingsList <- receta$ings %>%
+        str_split("·")
+      ingsListNew <- ingsList[[1]] %>%
+        str_trim() %>%
+        purrr::map(function(ingLine) {
+          div(style = "font-size: 10pt; font-weight: 300;", ingLine)
+        })
+    }
     fillDownloadData(uidInput, "Modal")
     showModal(modalDialog(
       title = tags$span(receta$name, id = "modal_title"),
@@ -272,7 +284,8 @@ server <- function(input, output, session) {
                    tiempo = ifelse(is.na(receta$tiempo_mins), "", paste(receta$tiempo_mins, " mins")),
                    hiddenTiempo = ifelse(is.na(receta$tiempo_mins), "hidden", ""),
                    hiddenDificultad = ifelse(is.na(receta$dificultad), "hidden", ""),
-                   download = uiOutput(paste0("downloadButtonModal", uidInput))
+                   download = uiOutput(paste0("downloadButtonModal", uidInput)),
+                   ings = ingsListNew
       ),
       footer = modalButton("Cerrar")
     ))
