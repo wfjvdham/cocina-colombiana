@@ -1,9 +1,8 @@
-\documentclass{article}
+\documentclass[$if(fontsize)$$fontsize$,$endif$$if(lang)$$lang$,$endif$$if(papersize)$$papersize$,$endif$$for(classoption)$$classoption$$sep$,$endfor$]{$documentclass$}
 \usepackage[utf8]{inputenc}
 \usepackage{multicol}
 \usepackage{geometry}
-\usepackage{xcolor}
-\usepackage{pgffor}
+
 
 % pandoc syntax highlighting
 $if(highlighting-macros)$
@@ -15,7 +14,7 @@ $if(highlighting-macros)$
 
 \geometry{letterpaper, top=60pt, left=80pt, right=120pt}
 \setlength{\columnsep}{2cm}
-\definecolor{light}{rgb}{0.56078431373, 0.52941176471 ,0.52941176471}
+%\definecolor{light}{rgb}{0.56078431373, 0.52941176471 ,0.52941176471}
 
 \begin{document}
 
@@ -26,7 +25,7 @@ $endif$
 
 $if(column1)$
   \begin{multicols}{2}
-  \noindent \color{light}
+  \noindent 
   $for(column1)$
     $column1$\newline
   $endfor$
@@ -40,7 +39,7 @@ $endif$
 $if(instruc)$
   {\noindent \LARGE Instruciones}\\
   \\
-  \noindent \color{light} $instruc$
+  \noindent  $instruc$
 $endif$
 
 \end{document}

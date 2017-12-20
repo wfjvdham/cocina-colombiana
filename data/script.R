@@ -30,6 +30,7 @@ recetas <- recetas %>%
 recetas$ings <- gsub("¼", "1/4", recetas$ings) 
 recetas$ings <- gsub("1½", "1.5", recetas$ings)
 recetas$ings <- gsub("½", "1/2", recetas$ings) 
+receta$instruc <- gsub('°', ' grados', receta$instruc)
 
 saveRDS(recetas, file = "data/recetas.Rda")
 
