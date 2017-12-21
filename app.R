@@ -336,10 +336,12 @@ server <- function(input, output, session) {
       ings_lines_length <- length(ings_lines[[1]])
       n_column1 <- ings_lines_length - round(ings_lines_length / 2)
       column1 <- ings_lines[[1]][1:n_column1] %>%
+        str_replace("\n", "") %>%
         str_trim() %>%
         paste(collapse = "\n- ") %>%
         paste('-', .)
       column2 <- ings_lines[[1]][(n_column1+1):ings_lines_length] %>%
+        str_replace("\n", "") %>%
         str_trim() %>%
         paste(collapse = "\n- ") %>%
         paste('-', .)

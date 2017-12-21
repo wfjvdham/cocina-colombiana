@@ -2,8 +2,10 @@ library(dplyr)
 library(readxl)
 library(readr)
 
-recetas <- read_excel('./data/recetas.xlsx')
-recetas_ing <- read_excel('./data/recetas-ing.xlsx')
+#recetas <- read_excel('./data/recetas.xlsx')
+#recetas_ing <- read_excel('./data/recetas-ing.xlsx')
+recetas <- read_csv('./data/recetas.csv')
+recetas_ing <- read_csv('./data/recetas-ing.csv')
 recetas_prohibidas <- read_csv('./data/Recetas prohibidas - Hoja 1.csv', 
                                col_names = FALSE)
 deptos_por_region <- read_csv('./data/Deptos por regiones - Hoja 1.csv') %>%
@@ -30,7 +32,8 @@ recetas <- recetas %>%
 recetas$ings <- gsub("¼", "1/4", recetas$ings) 
 recetas$ings <- gsub("1½", "1.5", recetas$ings)
 recetas$ings <- gsub("½", "1/2", recetas$ings) 
-receta$instruc <- gsub('°', ' grados', receta$instruc)
+recetas$ings <- gsub("1⁄2", "1/2", recetas$ings) 
+recetas$instruc <- gsub('°', ' grados', recetas$instruc)
 
 saveRDS(recetas, file = "data/recetas.Rda")
 
