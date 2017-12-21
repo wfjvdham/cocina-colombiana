@@ -355,7 +355,7 @@ server <- function(input, output, session) {
           instruc = receta$instruc
         )
         fileConn <- file(paste0("download_template", ".Rmd"))
-        writeLines(c("---\nparams:\noutput:\n  pdf_document:\n    template: download.tex\n    keep_tex: true\nname: \"`r params$name`\"\ninstruc: \"`r params$instruc`\"\ncolumn1:", column1,"column2:", column2, "---"), fileConn)
+        writeLines(c("---\nparams:\noutput:\n  pdf_document:\n    latex_engine: xelatex\n    template: download.tex\n    keep_tex: true\nname: \"`r params$name`\"\ninstruc: \"`r params$instruc`\"\ncolumn1:", column1,"column2:", column2, "---"), fileConn)
         close(fileConn)
         rmarkdown::render(paste0("download_template", ".Rmd"),
                           params = params,
