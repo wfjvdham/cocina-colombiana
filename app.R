@@ -221,9 +221,9 @@ server <- function(input, output, session) {
     selectedOptions <- list()
     if (!is.null(input$selected_ing_checkbox_group))
       selectedOptions <- input$selected_ing_checkbox_group
-    updateSelectizeInput(session, "select_ing",
-                         selected = selectedOptions)
-  }, ignoreNULL = FALSE)
+    if (length(selectedOptions) < length(input$select_ing))
+      updateSelectizeInput(session, "select_ing", selected = selectedOptions)
+  }, ignoreNULL = FALSE, priority = 10)
   
   output$ing_count <- renderUI({
     n <- 0
@@ -239,7 +239,7 @@ server <- function(input, output, session) {
     regiones <- recetas %>%
       count(region) %>%
       na.omit()
-    regiones_list <- append("Todos", regiones$region)
+    regiones_list <- append(regiones$region, "Todos")
     radioButtons("region",
                  "Filtre por región",
                  choices = regiones_list)
