@@ -1,25 +1,27 @@
 getDifcultadImage <- function(dificultad) {
-  if (is.na(dificultad)) {
-    dificultadImage <- ""
-  } else if (dificultad == 1) {
-    dificultadImage <- "img/Iconos especial cocina-06.png"
-  } else if (dificultad == 2) {
-    dificultadImage <- "img/Iconos especial cocina-07.png"
-  } else if (dificultad == 3) {
-    dificultadImage <- "img/Iconos especial cocina-08.png"
+  dificultadImage <- ""
+  if (!is.na(dificultad)) {
+    if (dificultad == 1) {
+      dificultadImage <- "img/Iconos especial cocina-06.png"
+    } else if (dificultad == 2) {
+      dificultadImage <- "img/Iconos especial cocina-07.png"
+    } else if (dificultad == 3) {
+      dificultadImage <- "img/Iconos especial cocina-08.png"
+    }
   }
   dificultadImage
 }
 
 getDifcultadText <- function(dificultad) {
-  if (is.na(dificultad)) {
-    dificultadText <- ""
-  } else if (dificultad == 1) {
-    dificultadText <- "Fácil"
-  } else if (dificultad == 2) {
-    dificultadText <- "Normal"
-  } else if (dificultad == 3) {
-    dificultadText <- "Difícil"
+  dificultadText <- ""
+  if (!is.na(dificultad)) {
+    if (dificultad == 1) {
+      dificultadText <- "Fácil"
+    } else if (dificultad == 2) {
+      dificultadText <- "Normal"
+    } else if (dificultad == 3) {
+      dificultadText <- "Difícil"
+    }
   }
   dificultadText
 }
