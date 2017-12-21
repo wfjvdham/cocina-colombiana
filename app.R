@@ -8,6 +8,9 @@ source("functions.R")
 
 ui <- bootstrapPage(
   theme = "theme.css",
+  tags$head(
+    includeScript("js/iframeSizer.contentWindow.min.js")
+  ),
   tags$head(tags$script(src="scripts.js")),
   useShinyjs(),
   div(id = "mobile",

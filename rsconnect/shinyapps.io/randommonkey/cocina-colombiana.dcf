@@ -1,0 +1,12 @@
+name: cocina-colombiana
+title: cocina-colombiana
+username:
+account: randommonkey
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 250027
+bundleId: 1145136
+url: https://randommonkey.shinyapps.io/cocina-colombiana/
+when: 1513803984.10357
+asMultiple: FALSE
+asStatic: FALSE
