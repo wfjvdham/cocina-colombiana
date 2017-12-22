@@ -1,3 +1,3 @@
 $(document).on('click', '.needed', function () {
-  Shiny.onInputChange('last_btn',this.id);
+  Shiny.onInputChange('last_btn', [this.id, Math.random()]);
 });

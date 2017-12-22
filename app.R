@@ -189,7 +189,7 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$last_btn, {
-    showRecetaModal(input$last_btn)
+    showRecetaModal(input$last_btn[[1]])
   })
   
   output$select_ingUI <- renderUI({
