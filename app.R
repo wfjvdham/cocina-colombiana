@@ -239,7 +239,7 @@ server <- function(input, output, session) {
     regiones <- recetas %>%
       count(region) %>%
       na.omit()
-    regiones_list <- append(regiones$region, "Todos")
+    regiones_list <- append("Todos", regiones$region)
     radioButtons("region",
                  "Filtre por región",
                  choices = regiones_list)

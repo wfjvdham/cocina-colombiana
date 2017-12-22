@@ -97,8 +97,6 @@ a:hover, a:visited, a:link, a:active {
   border-color: white;
   border-radius: 0;
   box-shadow: none;
-  flex: 1 0 auto;
-  align-self: center;
 }
 #searchNameUI {
   width: 100%;
