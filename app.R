@@ -189,7 +189,7 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$last_btn, {
-    showRecetaModal(input$last_btn)
+    showRecetaModal(input$last_btn[[1]])
   })
   
   output$select_ingUI <- renderUI({
@@ -221,9 +221,9 @@ server <- function(input, output, session) {
     selectedOptions <- list()
     if (!is.null(input$selected_ing_checkbox_group))
       selectedOptions <- input$selected_ing_checkbox_group
-    updateSelectizeInput(session, "select_ing",
-                         selected = selectedOptions)
-  }, ignoreNULL = FALSE)
+    if (length(selectedOptions) < length(input$select_ing))
+      updateSelectizeInput(session, "select_ing", selected = selectedOptions)
+  }, ignoreNULL = FALSE, priority = 10)
   
   output$ing_count <- renderUI({
     n <- 0
@@ -336,10 +336,12 @@ server <- function(input, output, session) {
       ings_lines_length <- length(ings_lines[[1]])
       n_column1 <- ings_lines_length - round(ings_lines_length / 2)
       column1 <- ings_lines[[1]][1:n_column1] %>%
+        str_replace("\n", "") %>%
         str_trim() %>%
         paste(collapse = "\n- ") %>%
         paste('-', .)
       column2 <- ings_lines[[1]][(n_column1+1):ings_lines_length] %>%
+        str_replace("\n", "") %>%
         str_trim() %>%
         paste(collapse = "\n- ") %>%
         paste('-', .)
@@ -353,7 +355,7 @@ server <- function(input, output, session) {
           instruc = receta$instruc
         )
         fileConn <- file(paste0("download_template", ".Rmd"))
-        writeLines(c("---\nparams:\noutput:\n  pdf_document:\n    template: download.tex\n    keep_tex: true\nname: \"`r params$name`\"\ninstruc: \"`r params$instruc`\"\ncolumn1:", column1,"column2:", column2, "---"), fileConn)
+        writeLines(c("---\nparams:\noutput:\n  pdf_document:\n    latex_engine: xelatex\n    template: download.tex\n    keep_tex: true\nname: \"`r params$name`\"\ninstruc: \"`r params$instruc`\"\ncolumn1:", column1,"column2:", column2, "---"), fileConn)
         close(fileConn)
         rmarkdown::render(paste0("download_template", ".Rmd"),
                           params = params,

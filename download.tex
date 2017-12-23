@@ -1,8 +1,10 @@
-\documentclass[$if(fontsize)$$fontsize$,$endif$$if(lang)$$lang$,$endif$$if(papersize)$$papersize$,$endif$$for(classoption)$$classoption$$sep$,$endfor$]{$documentclass$}
-\usepackage[utf8]{inputenc}
+\documentclass[letterpaper]{article}
+
+\usepackage{fontspec}
+\defaultfontfeatures{Ligatures=TeX}
+
 \usepackage{multicol}
 \usepackage{geometry}
-
 
 % pandoc syntax highlighting
 $if(highlighting-macros)$
@@ -37,7 +39,7 @@ $if(column1)$
 $endif$
 
 $if(instruc)$
-  {\noindent \LARGE Instruciones}\\
+  {\noindent \LARGE Instrucciones}\\
   \\
   \noindent  $instruc$
 $endif$

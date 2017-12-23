@@ -76,7 +76,6 @@ a:hover, a:visited, a:link, a:active {
 }
 #recetas {
   font-size: 20pt;
-  background-color: #e8e8e8;
   width: 130px;
   margin-left: 5pt;
   font-family: 'Josefin Sans', sans-serif;
@@ -98,11 +97,6 @@ a:hover, a:visited, a:link, a:active {
   border-color: white;
   border-radius: 0;
   box-shadow: none;
-  flex: 1 0 auto;
-  align-self: center;
-}
-#searchNameUI {
-  width: 100%;
 }
 #no_results {
   display: flex;

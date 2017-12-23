@@ -5,8 +5,8 @@ account: randommonkey
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 250027
-bundleId: 1145136
+bundleId: 1148850
 url: https://randommonkey.shinyapps.io/cocina-colombiana/
-when: 1513803984.10357
+when: 1514039090.1403
 asMultiple: FALSE
 asStatic: FALSE
