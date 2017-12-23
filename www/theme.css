@@ -98,9 +98,6 @@ a:hover, a:visited, a:link, a:active {
   border-radius: 0;
   box-shadow: none;
 }
-#searchNameUI {
-  width: 100%;
-}
 #no_results {
   display: flex;
   width: 100%;
